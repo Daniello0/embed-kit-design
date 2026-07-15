@@ -1,0 +1,39 @@
+---
+alwaysApply: true
+---
+
+**Product specification:** [product.mdc](./product.mdc)
+
+# Embeddable Chatbot Builder
+
+Build a landing page and clickable web app prototype for a chatbot builder. Users upload company documents and knowledge to create a chatbot. The chatbot is available inside the app as a ChatGPT-style chat interface and as an embeddable widget for customer websites.
+
+Treat this as a launch-ready product concept, not a throwaway demo. No backend is required — a clickable prototype with strong design and product feel is sufficient.
+
+## Requirements
+
+- Landing page that communicates product value and drives onboarding
+- Chat interface for document upload and in-app bot testing
+- Embeddable widget builder with copy/paste embed code
+- Paywall with pricing plans and logically gated features
+- Additional pages and features as defined in [product.mdc](./product.mdc)
+
+## Deliverables
+
+- Landing page
+- Web app for building chatbots
+- Presentation: video demo (preferred) or written tutorial with screenshots
+
+## Criteria
+
+- **Design quality:** Distinct brand and personality; not generic AI template aesthetics. Use Mobbin, Dribbble, or comparable references for proven patterns.
+- **Product thinking:** Clear onboarding, intentional user flow, no extraneous features. Follow the sequence defined in product.mdc: onboarding → aha (test chat) → embed → paywall.
+- **Attention to detail:** Animations, micro-interactions, copywriting, and overall polish.
+
+## Acceptance Checklist
+
+- Landing page communicates value and drives sign-up
+- Builder flow: upload docs → test chat → widget preview → copy embed code
+- Free tier limits are visible: 1 bot, 5 documents, watermark on widget
+- Paywall triggers contextually on Pro/Business gates (branding, analytics, second bot, API)
+- Chat UI includes suggested questions, typing indicator, and source citations (mocked)

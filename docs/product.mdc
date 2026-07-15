@@ -1,0 +1,346 @@
+---
+alwaysApply: true
+---
+
+# Product Specification: EmbedKit
+
+**Related documents:** [project-conventions.mdc](../.cursor/rules/project-conventions.mdc), [task.mdc](./task.mdc)
+
+## 1. Product Overview
+
+### Name
+
+**EmbedKit** — a no-code platform for building document-grounded AI chatbots with in-app testing and a website embed widget.
+
+**Tagline:** *Turn your docs into a chatbot. Embed it on your site in minutes.*
+
+### Positioning
+
+EmbedKit is a lightweight self-serve builder positioned between a basic FAQ widget and an enterprise helpdesk platform.
+
+| Segment | Limitation | EmbedKit response |
+| :--- | :--- | :--- |
+| Intercom Fin | Requires Intercom; complex onboarding; per-resolution pricing | Standalone product; fast setup; flat pricing |
+| CustomGPT | High accuracy at scale; higher price point | Focus on speed and simplicity for SMB use cases |
+| Chatbase | Fast setup; branding and API behind paywall | Clear tier structure; paywall after demonstrated value |
+
+### Target Audience
+
+**Primary (MVP)**
+
+- **SMB / micro-SaaS** (5–50 employees): founders, product marketers, or support leads who need a FAQ/support bot without engineering resources.
+- **Support teams** at growing SaaS companies: first-line self-serve before escalation to Intercom or Zendesk.
+
+**Secondary (post-MVP)**
+
+- Agencies building bots for clients (white-label on Business tier).
+- Internal knowledge teams converting HR/ops wikis into employee-facing chat.
+
+### Personas
+
+| Persona | Role | Problem | Expected outcome |
+| :--- | :--- | :--- | :--- |
+| Alex, Founder | CEO, micro-SaaS | Support consumes founder time; no budget for Intercom | Launch a pricing/docs FAQ bot quickly |
+| Maya, Support Lead | Head of Support, SaaS | Repetitive questions in Slack and email | Bot with help-center citations and site embed |
+| Jordan, Product Marketer | PMM | Needs a branded chat experience on the marketing site | Branded widget without platform watermark |
+
+### Jobs to Be Done
+
+1. When I have PDFs, docs, or FAQs, I want to turn them into a chatbot so I can answer customers 24/7 without hiring.
+2. When the bot is ready, I want to add a single embed snippet to my site so I do not depend on developers.
+3. When I confirm the bot works, I want to remove the watermark and apply my brand so the experience looks professional to customers.
+
+---
+
+## 2. Competitive References
+
+Reference products are used to identify proven interaction patterns. UI must not be copied verbatim. Relevant Mobbin flow categories: Onboarding, Chat Bot, Subscription & Paywall, Account Setup.
+
+### Intercom Fin
+
+**Observed patterns**
+
+- **Train → Preview → Deploy:** content ingestion, validation, then publication.
+- **Unified knowledge hub:** articles, PDFs, URLs, and snippets in one place with per-source AI enablement.
+- **Inline preview** adjacent to content list for pre-deploy testing.
+- **Guidance layer** separate from content: tone, policies, escalation rules.
+- **Deploy separated from Train:** going live is an explicit user action.
+
+**Adopted for EmbedKit:** preview before deploy; separate Knowledge and Deploy areas; contextual paywall when removing branding or enabling production embed.
+
+**Excluded:** workflow builder, omnichannel deployment, enterprise pricing complexity.
+
+### Chatbase
+
+**Observed patterns**
+
+- **Short setup loop:** upload → customize widget → copy embed → go live.
+- **Data sources tab** with files, website crawl, and Q&A pairs; real-time processing status.
+- **Deploy tab** with widget on/off toggle and ready-made `<script>` snippet.
+- **Widget customization:** bubble icon, colors, welcome message, suggested questions.
+- **Separate upsell triggers** for branding removal and API access.
+
+**Adopted for EmbedKit:** fast onboarding, copy-paste deploy, suggested starter questions, contextual upgrade on watermark removal.
+
+**Excluded:** per-message credits as primary UX metric; omnichannel.
+
+### CustomGPT
+
+**Observed patterns**
+
+- **Project-centric dashboard:** one project equals one bot with its own knowledge base.
+- **Built-in test chat:** full ChatGPT-style interface before external embed.
+- **Source attribution:** citations and document references in responses.
+- **Tiered limits** on documents and agents across Free → Standard → Premium.
+
+**Adopted for EmbedKit:** in-app test chat as a core screen; source citations in responses; document limits as a paywall lever.
+
+**Excluded:** 1400+ file formats, enterprise SSO, auto-sync integrations in MVP.
+
+### Pattern Adoption Matrix
+
+| Pattern | Intercom Fin | Chatbase | CustomGPT | EmbedKit MVP |
+| :--- | :---: | :---: | :---: | :---: |
+| Upload docs → train | Yes | Yes | Yes | Yes |
+| In-app test chat | Preview | Yes | Yes | Yes |
+| Embed code snippet | Messenger | Yes | Yes | Yes |
+| Widget customization | Yes | Yes | Yes | Pro |
+| Source citations | Yes | Partial | Yes | Yes (mocked) |
+| Paywall after value demonstration | Yes | Yes | Yes | Yes |
+| Team seats | Yes | Yes | Yes | Business |
+| API access | Yes | Standard+ | Yes | Business |
+
+---
+
+## 3. Pricing and Feature Gates
+
+Users must receive product value (a working bot response) before encountering paywall restrictions that block production deployment.
+
+### Plans
+
+| | **Free** | **Pro — $14.99/mo** | **Business — $29.99/mo** |
+| :--- | :--- | :--- | :--- |
+| Bots | 1 | 1 | Up to 5 |
+| Documents | 5 | 50 | Unlimited |
+| Messages / month | 1,000 | 20,000 | 100,000 |
+| Embed widget | Yes, with watermark | Yes, no watermark | Yes, no watermark |
+| Custom branding | No | Colors, logo, welcome message | Above + custom domain |
+| Analytics | No | Conversations, top questions | Above + export, team dashboard |
+| Team seats | 1 | 1 | Up to 5 |
+| API access | No | No | Yes |
+| Suggested questions | 3 | Unlimited | Unlimited |
+| Support | Community | Email | Priority |
+
+Annual billing displays a 20% discount (UI only in prototype).
+
+The Free plan is permanent. Sign-up does not require a credit card.
+
+### Gated Actions and Paywall Triggers
+
+| Trigger | Free limit | Required plan | Screen |
+| :--- | :--- | :--- | :--- |
+| Upload 6th document | 5 documents max | Pro | Knowledge / Upload |
+| Copy embed without watermark | Watermark in snippet | Pro | Deploy |
+| Customize widget colors or logo | Settings locked | Pro | Widget Builder |
+| View analytics | Empty or blurred state | Pro | Analytics |
+| Create second bot | 1 bot max | Business | Dashboard |
+| Invite teammate | Single user only | Business | Settings → Team |
+| Generate API key | Not available | Business | Settings → API |
+| Exceed monthly message limit | 1,000 messages | Pro or Business | Chat / Widget |
+
+### Paywall Behavior
+
+1. Do not surface the paywall before the aha moment: the user must upload documents and receive at least one meaningful response in test chat.
+2. Use contextual prompts (inline banner, disabled control with upgrade tooltip). Do not block the landing page with a full-screen paywall.
+3. Show the cost of staying on Free: side-by-side widget preview with and without watermark; explicit copy: *Your embed will show "Powered by EmbedKit".*
+4. Upgrade is a deliberate choice after value is demonstrated, not a sign-up gate.
+
+---
+
+## 4. Onboarding Flow
+
+```
+Landing → Sign Up → Create Bot → Upload Docs → Test Chat → Customize Widget → Embed Code → Paywall (on gated action)
+```
+
+### Step Definition
+
+| Step | Screen | Objective | Required elements |
+| :---: | :--- | :--- | :--- |
+| 1 | Landing | Communicate value; drive sign-up | Hero, primary CTA ("Build your bot free"), social proof, three-step explainer, pricing summary |
+| 2 | Sign Up | Minimize registration friction | Email and Google auth; no credit card |
+| 3 | Create Bot | Establish bot context | Bot name, optional avatar; default name derived from company name |
+| 4 | Upload Docs | Prepare knowledge base | Drag-and-drop PDF/TXT/DOCX; processing status; empty state with examples |
+| 5 | Test Chat | Aha moment | ChatGPT-style interface; suggested questions; citation chips on responses |
+| 6 | Widget Builder | Visual configuration | Live preview; color picker and welcome message (partially gated on Free) |
+| 7 | Deploy | Activation | Copy `<script>` snippet; site preview; watermark notice on Free |
+| 8 | Paywall | Conversion | Triggered on Pro/Business action; plan comparison |
+
+### Empty States
+
+| State | Copy / behavior |
+| :--- | :--- |
+| No documents uploaded | *Drop your FAQ, pricing page, or onboarding guide — we'll turn it into answers.* |
+| Documents ready, no messages sent | Three clickable suggested questions derived from uploaded content |
+| Embed copied on Free plan | Toast: *Widget live! Upgrade to remove EmbedKit branding.* |
+
+### Time to Value
+
+Target: **under 5 minutes** from sign-up to first bot response in test chat. Prototype uses mocked responses with realistic delay.
+
+---
+
+## 5. User Stories
+
+### Discovery and Landing
+
+- **US-01:** As a visitor, I want to understand the product within 10 seconds so I can decide whether to sign up.
+- **US-02:** As a visitor, I want to see a widget preview on the landing page so I can envision the result on my site.
+
+### Authentication and Setup
+
+- **US-03:** As a new user, I want to sign up with email or Google without a credit card so I can start immediately.
+- **US-04:** As a user, I want to name my bot and set an avatar so it reflects my brand.
+- **US-05:** As a user, I want to upload up to 5 documents via drag-and-drop so I can train my bot on the Free plan.
+
+### Knowledge and Chat
+
+- **US-06:** As a user, I want to see processing status for each document so I know when testing is available.
+- **US-07:** As a user, I want to ask questions in a ChatGPT-style interface so I can validate answer quality before deploy.
+- **US-08:** As a user, I want to see the source of each answer so I can trust bot responses.
+- **US-09:** As a user, I want to click suggested questions so I can quickly test common scenarios.
+
+### Widget and Deploy
+
+- **US-10:** As a user, I want to configure widget colors and welcome message with live preview so the widget matches my site.
+- **US-11:** As a user, I want to copy embed code in one click so I can add the widget without developers.
+- **US-12:** As a Free user, I want to see the watermark in preview so I understand what changes after upgrade.
+
+### Paywall and Billing
+
+- **US-13:** As a Free user, I want a contextual upgrade prompt when removing the watermark so I understand Pro value.
+- **US-14:** As a user, I want to compare plans side by side so I can select the appropriate tier.
+- **US-15:** As a Pro user, I want analytics (conversations, top questions) so I can improve my knowledge base.
+
+### Business Tier
+
+- **US-16:** As a Business user, I want to create multiple bots for different products or clients.
+- **US-17:** As a Business user, I want to invite teammates so support and marketing can collaborate.
+- **US-18:** As a Business user, I want an API key so I can integrate the bot into my product.
+
+---
+
+## 6. Information Architecture
+
+```
+/                     Landing
+/signup, /login       Authentication
+/app                  Dashboard (multi-bot on Business; single bot on Free/Pro)
+/app/bot/:id
+  /knowledge          Document upload and management
+  /chat               In-app test chat
+  /widget             Widget builder and preview
+  /deploy             Embed code
+  /analytics          Pro and above (gated)
+/app/settings
+  /profile            Account
+  /billing            Plan and upgrade
+  /team               Business (gated)
+  /api                Business (gated)
+/pricing              Standalone pricing page and modal variant
+```
+
+---
+
+## 7. MVP Scope
+
+This project delivers a clickable prototype. No backend is required.
+
+### In Scope
+
+- Landing page with onboarding CTA
+- Authentication screens (mocked)
+- Full builder flow: upload → chat → widget → embed
+- Paywall modal and pricing page with gated UI states
+- Micro-interactions: upload progress, typing indicator, copy-to-clipboard confirmation
+- Mock chat responses with citations (fixed response set; one response minimum)
+
+### Out of Scope
+
+- RAG or LLM pipeline
+- Real authentication and billing (Stripe)
+- Functional embed script (preview and snippet UI only)
+- Omnichannel deployment
+- API documentation
+- Team invitation flow (placeholder UI permitted)
+- Public share link for bots
+
+---
+
+## 8. Brand and Design Requirements
+
+### Voice and Copy
+
+- Direct and confident: *Your docs, answering 24/7* — not generic AI marketing language.
+- Action-oriented labels: *Copy code*, *Test your bot*, *Add a document*.
+- Explicit plan limits: *Free plan includes EmbedKit watermark*.
+
+### Visual Direction
+
+- Clean SaaS aesthetic; avoid generic AI gradient templates.
+- Single accent color (teal or coral); warm gray neutrals.
+- Widget preview renders as a realistic floating bubble, not a wireframe.
+- Motion: message fade-in, upload progress, confirmation on first embed copy.
+
+### UI Component Inventory
+
+| Component | Location | Specification |
+| :--- | :--- | :--- |
+| `ChatMessage` | Test chat, widget preview | User and assistant bubbles; citation chips |
+| `SuggestedQuestions` | Chat empty state | Three clickable pills |
+| `DocumentUploadZone` | Knowledge | Drag-and-drop; file list; processing badge |
+| `WidgetPreview` | Widget builder | Live embed mock |
+| `EmbedCodeBlock` | Deploy | Syntax highlighting; copy button |
+| `PaywallModal` | Gated actions | Plan comparison; upgrade CTA |
+| `PlanBadge` | Navigation, settings | Free / Pro / Business indicator |
+| `UpgradeBanner` | Gated screens | Inline; dismissible |
+
+---
+
+## 9. Success Metrics
+
+Post-launch targets. Not applicable to the prototype itself.
+
+| Metric | Definition | Target |
+| :--- | :--- | :--- |
+| Activation rate | Signed up → uploaded ≥1 document | > 60% |
+| Aha rate | Uploaded → sent ≥1 test message | > 70% |
+| Embed rate | Aha → copied embed code | > 40% |
+| Free → Pro conversion | Upgrade within 14 days | > 5% |
+| Time to first answer | Sign-up → first bot response | < 5 min |
+
+---
+
+## 10. Product Decisions
+
+| Decision | Resolution |
+| :--- | :--- |
+| Product name | **EmbedKit** |
+| Mock chat behavior | Fixed canned responses (minimum one response) |
+| Public share link | Out of MVP scope |
+| Currency display | USD only |
+
+---
+
+## 11. Deliverables Traceability
+
+| Deliverable | Spec sections | Acceptance criteria |
+| :--- | :--- | :--- |
+| Landing page | §1, §4 step 1 | Value proposition, CTA, pricing summary, distinct brand |
+| Web app builder | §4, §6 | Complete flow: upload → chat → widget → embed |
+| Chat interface | §5 US-07–09, §8 | ChatGPT-style UI, citations, suggested questions |
+| Widget builder | §5 US-10–12, §3 | Live preview; branding locked on Free |
+| Embed code | §4 step 7, §5 US-11 | Copyable snippet; watermark notice on Free |
+| Paywall | §3, §5 US-13–15 | Contextual triggers; three tiers |
+| Design quality | §2, §8 | Reference-informed patterns; cohesive visual identity |
+| Product flow | §3–§4 | Onboarding → aha → embed → paywall on gated action |
