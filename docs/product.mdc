@@ -232,11 +232,14 @@ Target: **under 5 minutes** from sign-up to first bot response in test chat. Pro
 
 ## 6. Information Architecture
 
+Implemented routes (see `frontend/src/app/router.tsx`):
+
 ```
-/                     Landing
-/signup, /login       Authentication
-/app                  Dashboard (multi-bot on Business; single bot on Free/Pro)
-/app/bot/:id
+/                     Landing (`MainPage` → landing sections)
+/signup, /login       Authentication (`AuthPage`)
+/pricing              Standalone pricing page
+/app                  Dashboard — bot grid (`DashboardPage`)
+/app/bot/:botId
   /knowledge          Document upload and management
   /chat               In-app test chat
   /widget             Widget builder and preview
@@ -247,23 +250,27 @@ Target: **under 5 minutes** from sign-up to first bot response in test chat. Pro
   /billing            Plan and upgrade
   /team               Business (gated)
   /api                Business (gated)
-/pricing              Standalone pricing page and modal variant
 ```
+
+Route helpers: `ROUTES` and `botRoutes` in `frontend/src/common/constants/routes.constants.ts`.
 
 ---
 
 ## 7. MVP Scope
 
-This project delivers a clickable prototype. No backend is required.
+**Status: implemented** in `frontend/` as a clickable prototype. No backend.
 
-### In Scope
+### In Scope (delivered)
 
-- Landing page with onboarding CTA
-- Authentication screens (mocked)
+- Landing page with hero, explainer steps, pricing summary, partners, and CTA
+- Authentication screens (mocked email + Google)
 - Full builder flow: upload → chat → widget → embed
 - Paywall modal and pricing page with gated UI states
+- Settings (profile, billing, team, API) with Business-tier gates
+- Analytics dashboard with Free-tier gate
 - Micro-interactions: upload progress, typing indicator, copy-to-clipboard confirmation
-- Mock chat responses with citations (fixed response set; one response minimum)
+- Mock chat responses with citations (fixed response set in `mock-responses.constants.ts`)
+- 26 Vitest unit/component tests
 
 ### Out of Scope
 
@@ -272,8 +279,9 @@ This project delivers a clickable prototype. No backend is required.
 - Functional embed script (preview and snippet UI only)
 - Omnichannel deployment
 - API documentation
-- Team invitation flow (placeholder UI permitted)
+- Team invitation flow (placeholder UI only)
 - Public share link for bots
+- `sessionStorage` state persistence (optional in design docs; not implemented)
 
 ---
 
@@ -334,13 +342,16 @@ Post-launch targets. Not applicable to the prototype itself.
 
 ## 11. Deliverables Traceability
 
-| Deliverable | Spec sections | Acceptance criteria |
-| :--- | :--- | :--- |
-| Landing page | §1, §4 step 1 | Value proposition, CTA, pricing summary, distinct brand |
-| Web app builder | §4, §6 | Complete flow: upload → chat → widget → embed |
-| Chat interface | §5 US-07–09, §8 | ChatGPT-style UI, citations, suggested questions |
-| Widget builder | §5 US-10–12, §3 | Live preview; branding locked on Free |
-| Embed code | §4 step 7, §5 US-11 | Copyable snippet; watermark notice on Free |
-| Paywall | §3, §5 US-13–15 | Contextual triggers; three tiers |
-| Design quality | §2, §8 | Reference-informed patterns; cohesive visual identity |
-| Product flow | §3–§4 | Onboarding → aha → embed → paywall on gated action |
+| Deliverable | Spec sections | Status | Implementation |
+| :--- | :--- | :---: | :--- |
+| Landing page | §1, §4 step 1 | Done | `features/main-page/`, `features/landing/` |
+| Web app builder | §4, §6 | Done | `features/dashboard/`, `knowledge/`, `chat/`, `widget/`, `deploy/` |
+| Chat interface | §5 US-07–09, §8 | Done | `features/chat/` |
+| Widget builder | §5 US-10–12, §3 | Done | `features/widget/` |
+| Embed code | §4 step 7, §5 US-11 | Done | `features/deploy/` |
+| Paywall | §3, §5 US-13–15 | Done | `common/components/paywall-modal.tsx`, `features/pricing/` |
+| Analytics | §3, §5 US-15 | Done | `features/analytics/` |
+| Settings | §5 US-16–18 | Done | `features/settings/` |
+| Design quality | §2, §8 | Done | Dark SaaS tokens in `frontend/src/index.css` |
+| Product flow | §3–§4 | Done | Zustand store + contextual paywall after aha moment |
+| Demo presentation | task.mdc | Done | `demo.mp4` |

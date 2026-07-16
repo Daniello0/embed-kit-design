@@ -4,109 +4,117 @@ alwaysApply: true
 
 # Project Stack & Coding Conventions
 
-You must follow these conventions for all TypeScript, JavaScript, TSX, and JSX files:
+EmbedKit is a **frontend-only clickable prototype** in `frontend/`. There is no backend. All persistence is mock data and Zustand in-memory state.
+
+Follow these conventions for all TypeScript, JavaScript, TSX, and JSX files under `frontend/src/`.
 
 ## Technical Stack
-- **Language**: TypeScript (Strict mode, no implicit 'any').
-- **Frameworks and Technologies**: Module CSS, Yup (Lib), React, React Router (Lib), Lucide React (Lib), Vite (Lib), Shadcn.
-- **Testing**: Vitest for unit tests.
-  - Place tests next to the source code using `*.test.ts` naming.
-- **Linting/Formatting**: ESLint + Prettier.
+
+- **Language**: TypeScript (strict mode, no implicit `any`)
+- **Runtime**: React 19
+- **Build**: Vite 8
+- **Routing**: React Router 7 (`createBrowserRouter`)
+- **State**: Zustand 5 (`frontend/src/common/stores/app.store.ts`)
+- **Styling**: CSS Modules (`*.module.css`) + design tokens in `frontend/src/index.css`
+- **Testing**: Vitest + Testing Library + jsdom
+- **Linting / formatting**: ESLint + Prettier
+- **Path alias**: `@/` → `frontend/src/`
+
+**Not used in this project:** Shadcn, Yup, Lucide React, backend frameworks.
 
 ## Naming Conventions
-- **Variables & Functions**: camelCase.
-- **Components & Types/Interfaces**: PascalCase.
-- **Files**: kebab-case (e.g., `user-profile.tsx`).
-- **Domain values (FE & BE)**: TypeScript `enum` in `src/common/enums/` (e.g., `MaterialFormat`, `Language`). Do not model the same domain values as string-literal unions in types or stores — use the enum type instead.
+
+- **Variables & functions**: `camelCase`
+- **Components & types / interfaces**: `PascalCase`
+- **Files**: kebab-case (e.g. `bot-card.tsx`, `mock-chat.utils.ts`)
+- **Domain values**: TypeScript `enum` in `frontend/src/common/enums/`. Do not model the same domain values as string-literal unions in types or stores — use the enum type instead.
 
 ## API, Error Handling & Data Validation
+
 - **JSDoc**: Document all public functions using JSDoc.
-- **Error Handling**: Never swallow errors. Use Result-type patterns or throw meaningful, descriptive errors.
+- **Error handling**: Never swallow errors. Use Result-type patterns or throw meaningful, descriptive errors.
+- **Validation**: Prototype auth uses local validators in feature utils (e.g. `auth.utils.ts`), not Yup.
 
 ## Development Workflow
-- **Test-First Approach**: Before implementing any new logic, feature, or bug fix, you must first create the necessary **mocks** and **unit tests**. 
-- **TDD Cycle**: Write the test, verify that it fails, and only then add the implementation.
-- **Mandatory Verification**: After every change or addition, the project must successfully pass the following checks:
-  1. **Build**: `npm run build` must complete without errors.
-  2. **Linting**: `npm run lint` must pass (no style or syntax violations).
-  3. **Testing**: `npm run test` must result in 100% pass rate for the affected logic.
+
+- **Test-first for new logic**: Add mocks and unit tests before or alongside implementation.
+- **TDD cycle**: Write the test, verify failure, then implement.
+- **Mandatory verification** (run from `frontend/`):
+  1. `npm run build` — must pass
+  2. `npm run lint` — must pass
+  3. `npm run test` — 100% pass rate for affected logic
 
 ## Architecture & Design Decisions
-- Always refer to `docs/` files when suggesting architectural changes or new features. Follow existing ADRs strictly.
-Here is the updated project organization guide in English:
 
-- **Feature-Based Organization:** All business logic must be organized by features within the `src/features/` directory. Each feature should be self-contained, encapsulating its own logic, controllers, models, and tests.
-- **Shared Components:** General-purpose components (e.g., mathematical operations, utilities, validators) that are used across multiple features must be placed in the `src/common/` directory and categorized by type.
-- **Function Focus and Conciseness:** Functions must remain focused and should not exceed **15-20 lines**. If a function grows beyond this limit, it must be refactored into smaller, testable sub-functions.
-- **Naming Conventions:** Use clear suffixes to define the role of each file (e.g., `.service.ts`, `.utils.ts`, `.controller.ts`, `.module.ts`).
+- Refer to `docs/` when suggesting architectural changes or new features.
+- This repo is a **prototype**, not a full-stack app. Do not introduce backend layers unless explicitly requested.
 
-## Project Structure Example:
+### Feature-Based Organization
 
-**1. Global Shared Components (`src/common/`):**
-Organized by tool type for use across the entire application:
-*   **constants/**
-    *   `app.constants.ts`
-*   **enums/**
-    *   `material-category.enum.ts`
-    *   `material-format.enum.ts`
-    *   `material-status.enum.ts`
-    *   `summary-length.enum.ts`
-*   **dto/**
-    *   `user/`
-        *   `create-user.dto.ts`
-        *   `update-user.dto.ts`
-        *   `user-response.dto.ts`
-*   **utils/**
-    *   `validators.utils.ts`
-    *   `formatters.utils.ts`
-*   **components/** *(frontend)*
-    *   `url-input.tsx`
-    *   `processing-settings.tsx`
-    *   `main-action-button.tsx`
-    *   `background-shape.tsx`
+Business UI and logic live in `frontend/src/features/`. Each feature is self-contained with its own components, constants, utils, styles, and tests.
 
-**2. Business Features (`src/features/`):**
-Each directory represents a standalone module. A feature may start with only an entity; controller, service, and module are added when the API layer is needed.
-*   **database/** — TypeORM infrastructure (connection, config, entity registration)
-    *   `database.module.ts`
-    *   `database.config.ts`
-    *   `database.constants.ts`
-*   **user/**
-    *   `user.entity.ts`
-    *   `user.service.ts`
-    *   `user.controller.ts`
-    *   `user.module.ts`
-    *   `user.utils.ts`
-    *   `user.constants.ts`
-*   **material/**
-    *   `material.entity.ts`
-*   **quiz/**
-    *   `quiz.entity.ts`
-    *   `quiz.types.ts`
-*   **quiz-attempt/**
-    *   `quiz-attempt.entity.ts`
-    *   `quiz-attempt.types.ts`
-*   **refresh-token/**
-    *   `refresh-token.entity.ts`
-*   **health/**
-    *   `health.controller.ts`
-    *   `health.service.ts`
-    *   `health.module.ts`
-*   **auth/** (planned)
-    *   `auth.service.ts`
-    *   `auth.controller.ts`
-    *   ...
-*   **main-page/** (frontend)
-    *   `main.service.ts`
-    *   `main.tsx`
-    *   `main.utils.ts`
-    *   `main.styles.css`
+Shared code used across features lives in `frontend/src/common/`, grouped by role:
 
-**Separation of Concerns Rule:**
-*   **Local Logic:** If a helper function is specific only to one feature, keep it within that feature's directory (e.g., `src/features/user/user.utils.ts`).
-*   **Global Logic:** If a component or utility is generic and reusable across different features, move it to the corresponding subfolder in `src/common/`.
+| Directory | Purpose |
+| :--- | :--- |
+| `common/components/` | Reusable UI primitives (`Button`, `Modal`, `BotNav`, …) |
+| `common/constants/` | App-wide constants and mock seed data |
+| `common/enums/` | Domain enums (`PlanTier`, `PaywallTrigger`, …) |
+| `common/hooks/` | Shared React hooks |
+| `common/stores/` | Zustand global store |
+| `common/types/` | Shared TypeScript types |
+| `common/utils/` | Cross-feature utilities |
+
+`frontend/src/app/` holds the router and root app shell.
+
+### File Role Suffixes
+
+Use clear suffixes inside features:
+
+| Suffix | Role |
+| :--- | :--- |
+| `.constants.ts` | Copy, limits, static config |
+| `.utils.ts` | Pure helpers and business rules |
+| `.module.css` | Scoped styles |
+| `.test.ts` / `.test.tsx` | Unit / component tests |
+| `*-page.tsx` | Route-level page component |
+| `*-gate.tsx` | Plan-gated wrapper (analytics, settings, widget) |
+
+### Implemented Features
+
+```
+frontend/src/features/
+├── analytics/     # Conversation stats (mocked), plan gate
+├── auth/          # Sign up / log in (mocked)
+├── chat/          # In-app test chat
+├── dashboard/     # Bot list, cards, create/edit modals, app shell
+├── deploy/        # Embed snippet and watermark preview
+├── knowledge/     # Document upload and management
+├── landing/       # Landing sections (hero, explainer, partners, …)
+├── main-page/     # `/` route — composes landing feature
+├── pricing/       # Standalone pricing page
+├── settings/      # Profile, billing, team, API
+└── widget/        # Widget builder and live preview
+```
+
+### Separation of Concerns
+
+- **Feature-local logic** stays in the feature directory (e.g. `knowledge.utils.ts`).
+- **Cross-feature logic** moves to `common/` (e.g. `mock-chat.utils.ts`, `app.store.ts`).
+- **Plan limits** are defined in `routes.constants.ts` as `PLAN_LIMITS` and enforced in feature utils + store actions.
 
 ## Anti-Patterns
-- Eliminate "magic numbers" and hardcoded strings. Any value with semantic meaning must be defined as a named constant in `src/common/constants` or `src/features/.../.constants.ts`.
-- Avoid God Entities. Strictly prohibit the creation of "God Classes" or "God Methods" that handle too many responsibilities.
-- Adhere to the Single Responsibility Principle (SRP). If a class or function manages multiple business domains, it must be refactored into specialized units.
+
+- Eliminate magic numbers and hardcoded strings. Use named constants in `common/constants/` or `features/.../*.constants.ts`.
+- Avoid god components. Split when a component exceeds ~20 lines of non-trivial logic.
+- Do not add real API calls, Stripe, or auth providers without an explicit product decision.
+- Do not introduce string-literal unions for values that already have enums in `common/enums/`.
+
+## Documentation Map
+
+| Document | Purpose |
+| :--- | :--- |
+| [docs/product.mdc](../../docs/product.mdc) | Product spec, pricing, user stories |
+| [docs/ui-ux-design.md](../../docs/ui-ux-design.md) | Visual design tokens and page specs |
+| [docs/schemas-design.md](../../docs/schemas-design.md) | Data models, routes, component inventory, store schema |
+| [docs/task.mdc](../../docs/task.mdc) | Original brief and completion checklist |

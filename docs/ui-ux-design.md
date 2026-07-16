@@ -85,13 +85,15 @@ Used for: **Back**, **Cancel**, ghost buttons, tab inactive states, secondary li
 
 | Context | Font | Size / Weight / Line-height |
 | :--- | :--- | :--- |
-| UI body | `Inter`, sans-serif | `14px` / 400 / `1.5` |
-| UI small | `Inter`, sans-serif | `12px` / 400 / `1.4` |
-| Section heading | `Inter`, semibold | `20px` / 600 / `1.3` |
-| Page title | `Inter`, semibold | `28–32px` / 600 / `1.2` |
-| Hero title (landing) | `Inter`, bold | `48–56px` / 700 / `1.1` |
-| Hero tagline | `Inter`, regular | `18–20px` / 400 / `1.5` |
-| Monospace (embed code) | `JetBrains Mono`, monospace | `13px` / 400 / `1.6` |
+| UI body | `Inter`, sans-serif | `18px` / 400 / `1.5` (`--font-size-sm`) |
+| UI small | `Inter`, sans-serif | `15px` / 400 / `1.4` (`--font-size-xs`) |
+| Section heading | `Inter`, semibold | `24px` / 600 / `1.3` |
+| Page title | `Inter`, semibold | `36px` / 600 / `1.2` |
+| Hero title (landing) | `Inter`, bold | `58px` / 700 / `1.1` |
+| Hero tagline | `Inter`, regular | `23px` / 400 / `1.5` |
+| Monospace (embed code) | `JetBrains Mono`, monospace | `16px` / 400 / `1.6` |
+
+Tokens are defined in `frontend/src/index.css`.
 
 ---
 
@@ -115,10 +117,10 @@ Used for: **Back**, **Cancel**, ghost buttons, tab inactive states, secondary li
 
 | Token | Value | Usage |
 | :--- | :--- | :--- |
-| `--radius-sm` | `8px` | Badges, chips, small buttons |
-| `--radius-md` | `12px` | Inputs, bot cards, buttons |
-| `--radius-lg` | `16px` | Panels, modals, upload zone |
-| `--radius-xl` | `24px` | Large modals, paywall |
+| `--radius-sm` | `10px` | Badges, chips, small buttons |
+| `--radius-md` | `14px` | Inputs, bot cards, buttons |
+| `--radius-lg` | `18px` | Panels, modals, upload zone |
+| `--radius-xl` | `26px` | Large modals, paywall |
 | `--radius-full` | `9999px` | Pills, suggested questions, avatar |
 
 ### Shadows and Blur
@@ -171,9 +173,9 @@ Used for: **Back**, **Cancel**, ghost buttons, tab inactive states, secondary li
 
 ### Icons
 
-- Library: `lucide-react`
-- Stroke width: `1.5`
-- Default size: `20px`; compact (card actions): `18px`
+- Custom inline SVG components (`bot-action-icon.tsx`) and stroke paths in landing sections
+- Shared sprite: `frontend/public/icons.svg`
+- Default stroke width: `1.5`; default size: `20px`; compact card actions: `18px`
 
 ---
 
@@ -181,32 +183,34 @@ Used for: **Back**, **Cancel**, ghost buttons, tab inactive states, secondary li
 
 ### 6.1. Landing Page (`/`)
 
+Implemented in `features/main-page/main-page.tsx`, composing sections from `features/landing/`.
+
 **Header (sticky, transparent over hero):**
-- Left: EmbedKit logo (wordmark)
-- Right: **Log in** (secondary outline) → `/login`; no theme toggle
+- Left: EmbedKit logo (wordmark) → `/`
+- Right: **Log in** (secondary outline) → `/login`
 
 **Hero (top of page):**
 - **Product name:** EmbedKit
 - **Tagline:** *Turn your docs into a chatbot. Embed it on your site in minutes.*
-- **Background:** Deep navy base (`#0A0B14`) with layered gradient curved stripe bands — flowing arcs in pink (`#EC4899` at ~12% opacity) and purple (`#8B5CF6` at ~10% opacity), animated with slow horizontal drift (CSS, ~20s loop). Bands are soft, organic curves (SVG or CSS `radial-gradient` layers), not harsh diagonal stripes.
+- **Background:** `GradientBackground` — deep navy base with layered pink/purple curved bands (CSS animation)
+- Hero image: `public/gen-images/hero-landing.png` (preloaded via `useLandingReady`)
 
-**Examples section (minimal):**
-- Heading: *See it in action*
-- Two or three small static previews only: (1) document upload thumbnail, (2) chat bubble with citation chip, (3) floating widget on a mock browser frame
-- No interactive demo on landing — keep lightweight
+**Explainer section (`ExplainerSteps`):**
+- Heading: three-step flow — Upload → Test → Embed
+- Alternating layout with large previews (`explainer-step-previews.tsx`)
+- Step images: `public/gen-images/step-upload.png`, `step-chat.png`, `step-embed.png`
 
-**Partners section:**
+**Pricing summary (`PricingSummary`):**
+- Compact Free / Pro / Business cards with link to `/pricing`
+
+**Partners section (`PartnersSection`):**
 - Heading: *Trusted by growing teams*
-- Row of 4–6 grayscale partner logos (placeholder SVGs); opacity `0.5`, hover `0.8`
+- Row of grayscale partner logos from `mock-partners.constants.ts`
 
-**Footer CTA (bottom of page):**
+**Footer CTA (`LandingCta`):**
 - Full-width band with subtle purple gradient wash
-- Single large primary button: **Start building** → `/signup`
+- Primary button: **Start building** → `/signup`
 - Subtext: *Free plan · No credit card required*
-
-**Optional mid-page blocks (below examples, above partners):**
-- Three-step explainer: Upload → Test → Embed (icon + one line each)
-- Compact pricing summary (Free / Pro / Business) with link to `/pricing`
 
 ---
 
@@ -241,11 +245,12 @@ Used for: **Back**, **Cancel**, ghost buttons, tab inactive states, secondary li
 
 **Bot card (rectangular):**
 - Size: min-width `280px`, height `160px`, radius `--radius-md`, background `--bg-surface`, shadow `--shadow-card`
-- **Top-left:** `Eye` icon — **View** (opens test chat `/app/bot/:id/chat`)
-- **Top-right:** `BookOpen` icon — **Knowledge base** (`/app/bot/:id/knowledge`)
-- **Bottom-left:** `Pencil` icon — **Edit info** (modal: name, avatar)
+- **Top-left:** View icon (`BotViewIcon`) — opens test chat `/app/bot/:botId/chat`
+- **Top-right:** Knowledge icon (`BotKnowledgeIcon`) — `/app/bot/:botId/knowledge`
+- **Bottom-left:** Edit icon (`BotEditIcon`) — opens `EditBotModal`
 - **Center:** bot name (semibold), document count badge, last-updated text
 - **Bottom-right:** status dot (active / processing)
+- Action tooltips via `ActionTooltip`
 - Card hover: `--bg-surface-hover`, slight `translateY(-2px)`
 
 **Multi-bot (Business):**
@@ -331,13 +336,13 @@ Used for: **Back**, **Cancel**, ghost buttons, tab inactive states, secondary li
 
 ### Bot Sub-navigation (tabs or sidebar within bot context)
 
-| Tab | Route | Icon |
+| Tab | Route | Notes |
 | :--- | :--- | :--- |
-| Knowledge | `/knowledge` | `BookOpen` |
-| Test chat | `/chat` | `MessageSquare` |
-| Widget | `/widget` | `Palette` |
-| Deploy | `/deploy` | `Code` |
-| Analytics | `/analytics` | `BarChart3` |
+| Knowledge | `/knowledge` | `BookOpen`-style icon in `BotNav` |
+| Test chat | `/chat` | `MessageSquare`-style icon |
+| Widget | `/widget` | `Palette`-style icon |
+| Deploy | `/deploy` | `Code`-style icon |
+| Analytics | `/analytics` | `BarChart3`-style icon |
 
 Active tab: pink underline or pink text. Inactive: `--text-secondary`.
 
@@ -355,13 +360,16 @@ Active tab: pink underline or pink text. Inactive: `--text-secondary`.
 | `ChatMessage` | Test chat, widget preview | User/assistant bubbles; citation chips |
 | `SuggestedQuestions` | Chat empty state | Up to 3 pills (Free limit) |
 | `DocumentUploadZone` | Knowledge | Drag-and-drop; file list; processing badge |
-| `BotCard` | Dashboard | Rectangular card; Eye / BookOpen / Pencil actions |
+| `BotCard` | Dashboard | Rectangular card; view / knowledge / edit actions |
 | `WidgetPreview` | Widget builder | Realistic floating bubble |
 | `EmbedCodeBlock` | Deploy | Monospace; copy button |
 | `PaywallModal` | Gated actions | Plan comparison |
 | `PlanBadge` | Nav, settings | Free / Pro / Business |
 | `UpgradeBanner` | Gated screens | Inline; dismissible |
-| `GradientBackground` | Landing hero | Curved stripe bands |
+| `GradientBackground` | Landing hero | Curved pink/purple stripe bands |
+| `ExplainerSteps` | Landing | Upload → Test → Embed with previews |
+| `ActionTooltip` | Bot card actions | Accessible hover labels |
+| `PublicPageHeader` | Pricing page | Back-to-home navigation |
 
 ---
 
@@ -396,8 +404,10 @@ Active tab: pink underline or pink text. Inactive: `--text-secondary`.
 
 ## 11. Implementation Notes
 
-- Styling: Module CSS per component; design tokens as CSS custom properties on `:root`
-- Icons: `lucide-react`, `strokeWidth={1.5}`
-- Code layout: `src/features/` for feature UI; shared primitives in `src/common/components/`
-- Component hierarchy and Zustand schema: [schemas-design.md](./schemas-design.md)
-- All user-visible strings in English; no i18n in MVP prototype
+- **Code root:** `frontend/src/` (alias `@/`)
+- **Styling:** Module CSS per component; design tokens as CSS custom properties on `:root` in `index.css`
+- **Icons:** Custom SVG components and `public/icons.svg` — not Lucide
+- **Layout:** `features/` for feature UI; shared primitives in `common/components/`
+- **State:** Zustand store in `common/stores/app.store.ts` — see [schemas-design.md](./schemas-design.md)
+- **Tests:** Vitest + Testing Library; 26 test files co-located with source
+- All user-visible strings in English; no i18n in prototype

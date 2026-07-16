@@ -1,39 +1,57 @@
 ---
-alwaysApply: true
+alwaysApply: false
 ---
 
-**Product specification:** [product.mdc](./product.mdc)
+**Product specification:** [product.mdc](./product.mdc)  
+**Implementation reference:** [schemas-design.md](./schemas-design.md)
 
-# Embeddable Chatbot Builder
+# EmbedKit — Project Brief & Completion Status
 
-Build a landing page and clickable web app prototype for a chatbot builder. Users upload company documents and knowledge to create a chatbot. The chatbot is available inside the app as a ChatGPT-style chat interface and as an embeddable widget for customer websites.
+Original assignment: build a landing page and clickable web app prototype for a document-grounded chatbot builder. **Status: completed** in `frontend/`.
 
-Treat this as a launch-ready product concept, not a throwaway demo. No backend is required — a clickable prototype with strong design and product feel is sufficient.
-
-## Requirements
+## Original Requirements
 
 - Landing page that communicates product value and drives onboarding
 - Chat interface for document upload and in-app bot testing
 - Embeddable widget builder with copy/paste embed code
 - Paywall with pricing plans and logically gated features
-- Additional pages and features as defined in [product.mdc](./product.mdc)
+- Additional pages and flows defined in [product.mdc](./product.mdc)
 
 ## Deliverables
 
-- Landing page
-- Web app for building chatbots
-- Presentation: video demo (preferred) or written tutorial with screenshots
-
-## Criteria
-
-- **Design quality:** Distinct brand and personality; not generic AI template aesthetics. Use Mobbin, Dribbble, or comparable references for proven patterns.
-- **Product thinking:** Clear onboarding, intentional user flow, no extraneous features. Follow the sequence defined in product.mdc: onboarding → aha (test chat) → embed → paywall.
-- **Attention to detail:** Animations, micro-interactions, copywriting, and overall polish.
+| Deliverable | Status | Location |
+| :--- | :---: | :--- |
+| Landing page | Done | `frontend/src/features/main-page/`, `frontend/src/features/landing/` |
+| Web app builder | Done | `frontend/src/features/{dashboard,knowledge,chat,widget,deploy}/` |
+| Auth screens (mocked) | Done | `frontend/src/features/auth/` |
+| Pricing & paywall | Done | `frontend/src/features/pricing/`, `common/components/paywall-modal.tsx` |
+| Settings | Done | `frontend/src/features/settings/` |
+| Analytics (gated) | Done | `frontend/src/features/analytics/` |
+| Unit tests | Done | 26 test files under `frontend/src/` |
+| Demo video | Done | `demo.mp4` (repo root) |
 
 ## Acceptance Checklist
 
-- Landing page communicates value and drives sign-up
-- Builder flow: upload docs → test chat → widget preview → copy embed code
-- Free tier limits are visible: 1 bot, 5 documents, watermark on widget
-- Paywall triggers contextually on Pro/Business gates (branding, analytics, second bot, API)
-- Chat UI includes suggested questions, typing indicator, and source citations (mocked)
+- [x] Landing page communicates value and drives sign-up
+- [x] Builder flow: upload docs → test chat → widget preview → copy embed code
+- [x] Free tier limits visible: 1 bot, 5 documents, watermark on widget
+- [x] Paywall triggers contextually on Pro/Business gates (branding, analytics, second bot, API, document limit)
+- [x] Chat UI includes suggested questions, typing indicator, and source citations (mocked)
+- [x] `npm run build`, `npm run lint`, and `npm run test` pass from `frontend/`
+
+## Running the Prototype
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173).
+
+## Out of Scope (unchanged)
+
+- RAG / LLM pipeline
+- Real authentication and billing
+- Functional embed script (snippet UI only)
+- `sessionStorage` persistence (documented as optional; not implemented)

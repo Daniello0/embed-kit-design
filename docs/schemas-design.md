@@ -4,13 +4,13 @@
 > **Product spec:** [product.mdc](./product.mdc)  
 > **UI/UX:** [ui-ux-design.md](./ui-ux-design.md)
 
-Single reference for data structures, enums, component inventory, and UI state. This is a **clickable prototype** — no real backend, auth, or billing. Mock data and local state replace API persistence.
+Single reference for data structures, enums, component inventory, routes, and UI state. This is a **completed clickable prototype** in `frontend/` — no real backend, auth, or billing. Mock data and Zustand in-memory state replace API persistence.
 
 ---
 
 ## 1. Enums
 
-All domain values use TypeScript `enum` in `src/common/enums/`. No string-literal unions for the same values in types or stores.
+All domain values use TypeScript `enum` in `frontend/src/common/enums/`. No string-literal unions for the same values in types or stores.
 
 | Enum | Values | Usage |
 | :--- | :--- | :--- |
@@ -23,14 +23,16 @@ All domain values use TypeScript `enum` in `src/common/enums/`. No string-litera
 | `ProcessingStep` | `idle`, `uploading`, `processing`, `ready` | Upload zone aggregate state |
 | `PaywallTrigger` | `document_limit`, `watermark`, `widget_branding`, `analytics`, `second_bot`, `team`, `api` | Context for upgrade modal |
 | `AuthView` | `signup`, `login` | Authentication screens |
+| `SettingsTab` | `profile`, `billing`, `team`, `api` | Settings sidebar tabs |
+| `BillingPeriod` | `monthly`, `annual` | Pricing page toggle (UI only) |
 
-**Naming conventions:**
-- TypeScript / JSON (prototype): `camelCase`
-- If a backend is added later: PostgreSQL `snake_case`, API `camelCase`
+Barrel export: `frontend/src/common/enums/index.ts`.
 
 ---
 
-## 2. Core Data Models (Prototype)
+## 2. Core Data Models
+
+Type definitions live in `frontend/src/common/types/`.
 
 ### User
 
@@ -42,6 +44,8 @@ interface User {
   createdAt: string; // ISO 8601
 }
 ```
+
+Runtime auth state uses `AppUserState` (`id`, `email`, `plan`) in the Zustand store.
 
 ### Bot
 
@@ -117,6 +121,8 @@ interface PricingPlan {
 
 ## 3. Plan Limits and Feature Gates
 
+Canonical limits: `PLAN_LIMITS` in `frontend/src/common/constants/routes.constants.ts`.
+
 | Feature | Free | Pro | Business |
 | :--- | :--- | :--- | :--- |
 | Bots | 1 | 1 | 5 |
@@ -141,7 +147,7 @@ interface PricingPlan {
 | Open team settings | `team` | Business |
 | Generate API key | `api` | Business |
 
-Paywall must not appear before the user receives at least one meaningful test-chat response (aha moment).
+Paywall opens only after `hasReachedAhaMoment` is true (first assistant response in test chat). Enforcement: `app.store.ts` → `openPaywall()`.
 
 ---
 
@@ -152,17 +158,19 @@ Prototype only — no Firebase, JWT, or server session.
 | Step | Behavior |
 | :--- | :--- |
 | 1 | User submits email/password or clicks **Continue with Google** |
-| 2 | UI sets `user` in Zustand with mock `id` and `email`; `plan` defaults to `free` |
+| 2 | `login()` / `loginWithGoogle()` sets `user` in Zustand; `plan` defaults to `free` |
 | 3 | Redirect to `/app` (dashboard) |
-| 4 | Log out clears `user` and navigates to `/` |
+| 4 | `logout()` resets to `MOCK_INITIAL_APP_STATE` and navigates to `/` |
 
-No tokens stored. `sessionStorage` optional for bot draft data only.
+Validation: `auth.utils.ts` (`validateEmail`, `validatePassword`). No tokens stored.
+
+**Note:** Sign-in starts with an empty bot list. `MOCK_DEMO_APP_STATE` (pre-seeded bot + documents) is used in tests only.
 
 ---
 
 ## 5. Mock Chat Responses
 
-Fixed canned responses keyed by question substring or suggested-question index. Minimum one response required.
+Fixed canned responses in `mock-responses.constants.ts`. Matching logic: `mock-chat.utils.ts` (`getMockResponseOrFallback`).
 
 ```typescript
 interface MockResponse {
@@ -173,28 +181,13 @@ interface MockResponse {
 }
 ```
 
-**Example entry:**
-
-```json
-{
-  "match": "pricing",
-  "content": "Our Pro plan starts at $14.99/month and includes 50 documents and watermark-free embed.",
-  "citations": [
-    {
-      "documentId": "doc-1",
-      "documentName": "pricing.pdf",
-      "excerpt": "Pro — $14.99/mo, 50 documents..."
-    }
-  ],
-  "delayMs": 1200
-}
-```
-
-Fallback response if no match: generic *I found relevant information in your documents* with a citation from the first ready document.
+Fallback when no match: generic *I found relevant information in your documents* with a citation from the first ready document.
 
 ---
 
 ## 6. Embed Code Snippet (Mock)
+
+Generated in `deploy.utils.ts`:
 
 ```html
 <script
@@ -210,73 +203,84 @@ Free plan appends HTML comment in copy buffer: `<!-- Powered by EmbedKit -->`. P
 
 ## 7. Route Map
 
+Defined in `frontend/src/app/router.tsx`. Helpers in `routes.constants.ts`.
+
 | Path | Screen | Auth |
 | :--- | :--- | :--- |
-| `/` | Landing | Public |
+| `/` | Landing (`MainPage`) | Public |
 | `/signup` | Sign up | Public |
 | `/login` | Log in | Public |
 | `/pricing` | Pricing | Public |
 | `/app` | Dashboard (bots) | Required |
-| `/app/bot/:id/knowledge` | Document upload | Required |
-| `/app/bot/:id/chat` | Test chat | Required |
-| `/app/bot/:id/widget` | Widget builder | Required |
-| `/app/bot/:id/deploy` | Embed code | Required |
-| `/app/bot/:id/analytics` | Analytics (gated) | Required |
+| `/app/bot/:botId/knowledge` | Document upload | Required |
+| `/app/bot/:botId/chat` | Test chat | Required |
+| `/app/bot/:botId/widget` | Widget builder | Required |
+| `/app/bot/:botId/deploy` | Embed code | Required |
+| `/app/bot/:botId/analytics` | Analytics (gated) | Required |
 | `/app/settings/profile` | Account | Required |
 | `/app/settings/billing` | Plan and upgrade | Required |
 | `/app/settings/team` | Team (gated) | Required |
 | `/app/settings/api` | API keys (gated) | Required |
 
+Bot index route `/app/bot/:botId` redirects to `knowledge`.
+
 ---
 
 ## 8. UI Component Structure
 
-Code in `src/features/` and `src/common/`. See [ui-ux-design.md](./ui-ux-design.md) for visual specs.
+Code in `frontend/src/features/` and `frontend/src/common/`. Visual specs: [ui-ux-design.md](./ui-ux-design.md).
 
-### Feature: `landing`
+### Feature: `main-page` + `landing`
 
 | Component | Responsibility |
 | :--- | :--- |
+| `MainPage` | `/` route; composes landing sections |
 | `LandingHeader` | Logo, Log in link |
-| `HeroSection` | Product name, tagline, gradient background |
+| `HeroSection` | Product name, tagline, hero image |
 | `GradientBackground` | Curved pink/purple stripe bands |
-| `ExamplesSection` | Minimal static previews (upload, chat, widget) |
+| `ExplainerSteps` | Upload → Test → Embed with large previews |
+| `ExplainerStepPreviews` | `UploadStepPreview`, `ChatStepPreview`, `EmbedStepPreview` |
+| `PricingSummary` | Compact tier cards → `/pricing` |
 | `PartnersSection` | Partner logo row |
-| `LandingCta` | **Start building** button → `/signup` |
-| `ExplainerSteps` | Upload → Test → Embed (optional) |
-| `PricingSummary` | Compact tier cards (optional) |
+| `LandingCta` | **Start building** → `/signup` |
+| `useLandingReady` | Preloads images/fonts before reveal |
 
 ### Feature: `auth`
 
 | Component | Responsibility |
 | :--- | :--- |
-| `AuthForm` | Email/password fields |
-| `GoogleAuthButton` | Mock Google sign-in |
 | `AuthPage` | Sign up / log in layout |
+| `AuthForm` | Email/password fields + validation |
+| `GoogleAuthButton` | Mock Google sign-in |
+| `RequireAuth` | Route guard → redirect to `/login` |
 
 ### Feature: `dashboard`
 
 | Component | Responsibility |
 | :--- | :--- |
+| `DashboardPage` | Bot grid page at `/app` |
 | `AppShell` | Top bar, plan badge, user menu |
+| `BotLayout` | Bot-scoped layout with `BotNav` |
+| `BotRoutePage` | Resolves `botId` param for child routes |
 | `BotGrid` | Responsive grid of bot cards |
-| `BotCard` | Rectangular card; Eye (view), BookOpen (knowledge), Pencil (edit) |
+| `BotCard` | Rectangular card; view / knowledge / edit actions |
 | `CreateBotModal` | Name + optional avatar |
-| `EditBotModal` | Edit name/avatar (Pencil action) |
+| `EditBotModal` | Edit name/avatar |
 | `EmptyBotsState` | First-bot prompt |
 
 **BotCard action map:**
 
-| Position | Icon | Action | Route / behavior |
+| Position | Component | Action | Route / behavior |
 | :--- | :--- | :--- | :--- |
-| Top-left | `Eye` | View / test chat | `/app/bot/:id/chat` |
-| Top-right | `BookOpen` | Knowledge base | `/app/bot/:id/knowledge` |
-| Bottom-left | `Pencil` | Edit general info | Open `EditBotModal` |
+| Top-left | `BotViewIcon` | View / test chat | `/app/bot/:botId/chat` |
+| Top-right | `BotKnowledgeIcon` | Knowledge base | `/app/bot/:botId/knowledge` |
+| Bottom-left | `BotEditIcon` | Edit general info | Open `EditBotModal` |
 
 ### Feature: `knowledge`
 
 | Component | Responsibility |
 | :--- | :--- |
+| `KnowledgePage` | Document management page |
 | `DocumentUploadZone` | Drag-and-drop; accept PDF, TXT, DOCX |
 | `DocumentList` | File rows with status badges |
 | `DocumentRow` | Name, format, status, remove |
@@ -286,6 +290,7 @@ Code in `src/features/` and `src/common/`. See [ui-ux-design.md](./ui-ux-design.
 
 | Component | Responsibility |
 | :--- | :--- |
+| `ChatPage` | Test chat page wrapper |
 | `ChatThread` | Message list with auto-scroll |
 | `ChatMessage` | Bubble + citation chips |
 | `ChatInput` | Text input + send |
@@ -296,15 +301,18 @@ Code in `src/features/` and `src/common/`. See [ui-ux-design.md](./ui-ux-design.
 
 | Component | Responsibility |
 | :--- | :--- |
+| `WidgetPage` | Widget builder page |
 | `WidgetSettings` | Color, welcome message, questions |
 | `WidgetPreview` | Live floating bubble on mock page |
 | `BrandingLock` | Upgrade tooltip on gated controls |
+| `WidgetCustomizationGate` | Plan gate wrapper |
 
 ### Feature: `deploy`
 
 | Component | Responsibility |
 | :--- | :--- |
-| `EmbedCodeBlock` | Syntax highlight + copy |
+| `DeployPage` | Embed code page |
+| `EmbedCodeBlock` | Monospace snippet + copy |
 | `WatermarkPreview` | Side-by-side with/without watermark |
 | `CopyConfirmToast` | Success feedback |
 
@@ -312,13 +320,18 @@ Code in `src/features/` and `src/common/`. See [ui-ux-design.md](./ui-ux-design.
 
 | Component | Responsibility |
 | :--- | :--- |
-| `AnalyticsDashboard` | Conversation stats (mocked) |
+| `AnalyticsPage` | Analytics page wrapper |
+| `AnalyticsDashboard` | Stats layout (mocked data) |
+| `AnalyticsStatCards` | Conversation count cards |
+| `AnalyticsDailyChart` | Daily conversation chart |
+| `AnalyticsTopQuestions` | Top questions list |
 | `AnalyticsGate` | Blurred state + upgrade CTA |
 
 ### Feature: `pricing`
 
 | Component | Responsibility |
 | :--- | :--- |
+| `PricingPage` | Standalone pricing page |
 | `PricingTable` | Three tiers + feature comparison |
 | `BillingToggle` | Monthly / annual (UI only) |
 
@@ -331,8 +344,9 @@ Code in `src/features/` and `src/common/`. See [ui-ux-design.md](./ui-ux-design.
 | `BillingSettings` | Current plan + upgrade |
 | `TeamSettings` | Placeholder + gate |
 | `ApiSettings` | Placeholder + gate |
+| `SettingsGate` | Reusable plan gate wrapper |
 
-### Shared: `src/common/components/`
+### Shared: `frontend/src/common/components/`
 
 | Component | Responsibility |
 | :--- | :--- |
@@ -344,102 +358,110 @@ Code in `src/features/` and `src/common/`. See [ui-ux-design.md](./ui-ux-design.
 | `UpgradeBanner` | Inline dismissible upsell |
 | `Toast` | Ephemeral notifications |
 | `BotNav` | Tab bar for bot sub-routes |
+| `ActionTooltip` | Accessible action labels |
+| `PublicPageHeader` | Back-to-home on public pages |
+| `BotViewIcon`, `BotKnowledgeIcon`, `BotEditIcon` | Dashboard card action icons |
+
+### Shared: `frontend/src/common/hooks/`
+
+| Hook | Responsibility |
+| :--- | :--- |
+| `usePreloadImages` | Image/font preload for landing |
+| `useUpgradeNavigation` | Navigate to `/pricing` on upgrade CTA |
 
 ---
 
 ## 9. UI State Schema (Zustand)
 
+Store: `frontend/src/common/stores/app.store.ts`. Types: `app-state.types.ts`.
+
 ```typescript
-enum PlanTier {
-  FREE = 'free',
-  PRO = 'pro',
-  BUSINESS = 'business',
-}
-
-enum DocumentStatus {
-  UPLOADING = 'uploading',
-  PROCESSING = 'processing',
-  READY = 'ready',
-  ERROR = 'error',
-}
-
-enum BotStatus {
-  DRAFT = 'draft',
-  READY = 'ready',
-  PROCESSING = 'processing',
-}
-
-enum PaywallTrigger {
-  DOCUMENT_LIMIT = 'document_limit',
-  WATERMARK = 'watermark',
-  WIDGET_BRANDING = 'widget_branding',
-  ANALYTICS = 'analytics',
-  SECOND_BOT = 'second_bot',
-  TEAM = 'team',
-  API = 'api',
-}
-
-interface AppState {
-  user: {
-    id: string | null;
-    email: string | null;
-    plan: PlanTier;
-  };
+interface AppDataState {
+  user: AppUserState;
   bots: Bot[];
   documents: Record<string, Document[]>; // keyed by botId
   chat: Record<string, ChatMessage[]>; // keyed by botId
   widgetConfigs: Record<string, WidgetConfig>; // keyed by botId
-  ui: {
-    activeBotId: string | null;
-    paywallOpen: boolean;
-    paywallTrigger: PaywallTrigger | null;
-    upgradeBannerDismissed: boolean;
-    hasReachedAhaMoment: boolean; // true after first assistant response
-  };
+  ui: AppUiState;
+}
+
+interface AppUiState {
+  activeBotId: string | null;
+  paywallOpen: boolean;
+  paywallTrigger: PaywallTrigger | null;
+  upgradeBannerDismissed: boolean;
+  hasReachedAhaMoment: boolean;
 }
 ```
+
+Extended runtime fields on the store (not in `AppDataState`):
+
+| Field | Type | Purpose |
+| :--- | :--- | :--- |
+| `isReady` | `boolean` | Store hydration flag (tests) |
+| `chatTypingByBotId` | `Record<string, boolean>` | Per-bot typing indicator |
 
 ### Key Actions (store methods)
 
 | Action | Effect |
 | :--- | :--- |
 | `login(email)` | Set mock user, `plan: free` |
-| `logout()` | Clear user and sensitive state |
+| `loginWithGoogle()` | Set mock user with Google email |
+| `logout()` | Reset to `MOCK_INITIAL_APP_STATE` |
 | `createBot(name, avatarUrl?)` | Append bot; enforce tier bot limit |
 | `updateBot(id, patch)` | Update name/avatar |
+| `deleteBot(id)` | Remove bot and associated documents/chat/config |
 | `addDocument(botId, file)` | Simulate upload → processing → ready |
+| `removeDocument(botId, documentId)` | Remove document; decrement count |
 | `sendMessage(botId, text)` | Append user msg; queue mock assistant reply |
+| `getWidgetConfig(botId)` | Return config or defaults |
 | `updateWidgetConfig(botId, patch)` | Merge widget settings |
-| `openPaywall(trigger)` | Only if `hasReachedAhaMoment` or trigger is not revenue-gated |
-| `setAhaMoment()` | Called after first assistant response |
+| `openPaywall(trigger)` | Only if `hasReachedAhaMoment` |
+| `closePaywall()` | Dismiss modal |
+
+Test helper: `resetAppStore()` resets to initial prototype state.
 
 ---
 
-## 10. Session Persistence (Optional)
+## 10. Mock Data Files
 
-Key: `embedkit:state` in `sessionStorage` — optional for prototype refresh survival.
-
-Persist: `bots`, `documents`, `chat`, `widgetConfigs`, `user`, `ui.hasReachedAhaMoment`.  
-Do not persist: `paywallOpen`, transient upload progress.
+| File | Purpose |
+| :--- | :--- |
+| `mock-seed.constants.ts` | `MOCK_INITIAL_APP_STATE`, `MOCK_DEMO_APP_STATE` |
+| `mock-bots.constants.ts` | Demo bot records |
+| `mock-documents.constants.ts` | Demo documents per bot |
+| `mock-widget.constants.ts` | Default widget configs |
+| `mock-user.constants.ts` | Guest and demo user |
+| `mock-responses.constants.ts` | Canned chat replies |
+| `mock-pricing.constants.ts` | Pricing tiers |
+| `mock-analytics.constants.ts` | Dashboard stats |
+| `mock-partners.constants.ts` | Partner logo placeholders |
+| `mock-ids.constants.ts` | Stable IDs for tests |
 
 ---
 
-## 11. Onboarding Flow State Machine
+## 11. Session Persistence
+
+**Not implemented.** State resets on page refresh. `sessionStorage` persistence was considered optional in early design docs but is not wired up. Use `resetAppStore()` in tests to restore defaults.
+
+---
+
+## 12. Onboarding Flow State Machine
 
 | Step | Route | Completion condition |
 | :---: | :--- | :--- |
 | 1 | `/` | User clicks **Start building** |
 | 2 | `/signup` | Mock auth success |
 | 3 | `/app` | Bot created |
-| 4 | `/app/bot/:id/knowledge` | ≥1 document `ready` |
-| 5 | `/app/bot/:id/chat` | ≥1 assistant message (`hasReachedAhaMoment`) |
-| 6 | `/app/bot/:id/widget` | Config viewed or saved |
-| 7 | `/app/bot/:id/deploy` | Embed code copied |
+| 4 | `/app/bot/:botId/knowledge` | ≥1 document `ready` |
+| 5 | `/app/bot/:botId/chat` | ≥1 assistant message (`hasReachedAhaMoment`) |
+| 6 | `/app/bot/:botId/widget` | Config viewed or saved |
+| 7 | `/app/bot/:botId/deploy` | Embed code copied |
 | 8 | Paywall modal | Triggered on gated action only |
 
 ---
 
-## 12. Empty States
+## 13. Empty States
 
 | Context | Copy |
 | :--- | :--- |
@@ -451,7 +473,7 @@ Do not persist: `paywallOpen`, transient upload progress.
 
 ---
 
-## 13. Error and Toast Messages
+## 14. Error and Toast Messages
 
 | Event | Message |
 | :--- | :--- |
@@ -462,3 +484,17 @@ Do not persist: `paywallOpen`, transient upload progress.
 | Generic error | *Something went wrong. Please try again.* |
 
 All strings are English in the prototype.
+
+---
+
+## 15. Test Coverage
+
+26 test files under `frontend/src/`, covering:
+
+- Router and navigation
+- Zustand store actions and paywall gating
+- Feature utils (auth, chat, deploy, dashboard, knowledge, pricing, settings, widget, analytics)
+- Key page components (auth, chat, dashboard, deploy, knowledge, main-page, pricing, settings, widget, analytics)
+- Shared components (`BotNav`) and hooks (`usePreloadImages`)
+
+Run: `cd frontend && npm run test`
