@@ -39,8 +39,8 @@
   --badge-business-text: #a78bfa;
 
   /* Typography */
-  --font-family-ui: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    sans-serif;
+  --font-family-ui:
+    Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-family-mono: 'JetBrains Mono', ui-monospace, monospace;
   --font-size-xs: 12px;
   --line-height-xs: 1.4;

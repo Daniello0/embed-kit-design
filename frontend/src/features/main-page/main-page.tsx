@@ -20,9 +20,7 @@ export function MainPage() {
         <p className={styles.eyebrow}>Document-grounded chatbots</p>
         <h1 className={styles.title}>{APP_NAME}</h1>
         <p className={styles.subtitle}>
-          {isReady
-            ? 'Not ready yet.'
-            : 'Initializing…'}
+          {isReady ? 'Not ready yet.' : 'Initializing…'}
         </p>
       </section>
     </main>
