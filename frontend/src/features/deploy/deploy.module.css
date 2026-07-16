@@ -1,0 +1,316 @@
+.deployPage {
+  max-width: var(--content-max-width-app);
+  margin: 0 auto;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--font-size-page-title);
+  font-weight: var(--font-weight-page-title);
+  line-height: var(--line-height-page-title);
+}
+
+.description {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+
+.panelTitle {
+  margin: 0 0 var(--space-1);
+  font-size: var(--font-size-section);
+  font-weight: var(--font-weight-section);
+  line-height: var(--line-height-section);
+}
+
+.panelHint {
+  margin: 0 0 var(--space-4);
+  color: var(--text-muted);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-xs);
+}
+
+.codeBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.codePre {
+  margin: 0;
+  padding: var(--space-4);
+  overflow-x: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-base);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-mono);
+  line-height: 1.6;
+  color: var(--text-primary);
+  white-space: pre;
+}
+
+.codeTag {
+  color: var(--primary);
+}
+
+.codeAttr {
+  color: var(--secondary-hover);
+}
+
+.codeValue {
+  color: #34d399;
+}
+
+.codeComment {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.codeActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.copyButton {
+  height: var(--btn-height-md);
+  padding: 0 var(--btn-padding-x-md);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: var(--text-on-primary);
+  font: inherit;
+  font-size: var(--btn-font-size-md);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color var(--transition-card-hover);
+}
+
+.copyButton:hover {
+  background: var(--primary-hover);
+}
+
+.copyButton:active {
+  background: var(--primary-pressed);
+}
+
+.secondaryButton {
+  height: var(--btn-height-sm);
+  padding: 0 var(--btn-padding-x-sm);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--secondary-hover);
+  font: inherit;
+  font-size: var(--btn-font-size-sm);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-card-hover),
+    border-color var(--transition-card-hover);
+}
+
+.secondaryButton:hover {
+  background: var(--secondary-subtle);
+  border-color: var(--secondary-hover);
+}
+
+.watermarkNotice {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.toast {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--primary-subtle);
+  color: var(--primary-hover);
+  font-size: var(--font-size-sm);
+}
+
+.previewGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.previewCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 280px;
+  padding: var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-base);
+}
+
+.previewCardLocked {
+  position: relative;
+}
+
+.previewLabel {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.previewFrame {
+  position: relative;
+  flex: 1;
+  min-height: 180px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    180deg,
+    var(--bg-surface) 0%,
+    var(--bg-base) 100%
+  );
+  overflow: hidden;
+}
+
+.previewContent {
+  padding: var(--space-4);
+}
+
+.previewHeading {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.previewBody {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-xs);
+}
+
+.widgetPanel {
+  position: absolute;
+  right: var(--space-3);
+  bottom: calc(var(--space-3) + 44px);
+  width: min(180px, calc(100% - var(--space-6)));
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-md);
+}
+
+.widgetPanelHeader {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+
+.widgetPanelBody {
+  padding: var(--space-3);
+}
+
+.welcomeBubble {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-base);
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-xs);
+}
+
+.watermark {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  text-align: center;
+}
+
+.widgetBubble {
+  position: absolute;
+  right: var(--space-3);
+  bottom: var(--space-3);
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--text-on-primary);
+  font-size: 1.25rem;
+  box-shadow: var(--shadow-md);
+}
+
+.lockOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.lockCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 220px;
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  text-align: center;
+}
+
+.lockDescription {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-xs);
+}
+
+.upgradeButton {
+  height: var(--btn-height-sm);
+  padding: 0 var(--btn-padding-x-sm);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: var(--text-on-primary);
+  font: inherit;
+  font-size: var(--btn-font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.upgradeButton:hover {
+  background: var(--primary-hover);
+}
+
+@media (max-width: 768px) {
+  .previewGrid {
+    grid-template-columns: 1fr;
+  }
+}
