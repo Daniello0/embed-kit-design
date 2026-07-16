@@ -26,4 +26,5 @@ export const DASHBOARD_COPY = {
   LOG_OUT: 'Log out',
   USER_MENU_LABEL: 'Account menu',
   INVALID_NAME: 'Enter a bot name to continue.',
+  BACK_TO_BOTS: 'Back to bots',
 } as const

@@ -1,8 +1,11 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom'
 import { ROUTES } from '@/common/constants/routes.constants'
+import { AnalyticsPage } from '@/features/analytics/analytics-page'
 import { AuthPage, RequireAuth } from '@/features/auth'
-import { AnalyticsRoute } from '@/features/analytics'
-import { DashboardPage } from '@/features/dashboard'
+import { ChatPage } from '@/features/chat'
+import { BotLayout, BotRoutePage, DashboardPage } from '@/features/dashboard'
+import { DeployPage } from '@/features/deploy'
+import { KnowledgePage } from '@/features/knowledge'
 import { MainPage } from '@/features/main-page/main-page'
 import { PricingPage } from '@/features/pricing'
 import {
@@ -12,6 +15,7 @@ import {
   SettingsLayout,
   TeamSettings,
 } from '@/features/settings'
+import { WidgetPage } from '@/features/widget'
 
 /**
  * Application route definitions.
@@ -42,12 +46,38 @@ export const router = createBrowserRouter([
     ),
   },
   {
-    path: '/app/bot/:botId/analytics',
+    path: '/app/bot/:botId',
     element: (
       <RequireAuth>
-        <AnalyticsRoute />
+        <BotLayout />
       </RequireAuth>
     ),
+    children: [
+      {
+        index: true,
+        element: <Navigate to="knowledge" replace />,
+      },
+      {
+        path: 'knowledge',
+        element: <BotRoutePage Page={KnowledgePage} />,
+      },
+      {
+        path: 'chat',
+        element: <BotRoutePage Page={ChatPage} />,
+      },
+      {
+        path: 'widget',
+        element: <BotRoutePage Page={WidgetPage} />,
+      },
+      {
+        path: 'deploy',
+        element: <BotRoutePage Page={DeployPage} />,
+      },
+      {
+        path: 'analytics',
+        element: <BotRoutePage Page={AnalyticsPage} />,
+      },
+    ],
   },
   {
     path: '/app/settings',

@@ -1,6 +1,8 @@
 export { AppShell } from './app-shell'
 export { BotCard } from './bot-card'
 export { BotGrid } from './bot-grid'
+export { BotLayout } from './bot-layout'
+export { BotRoutePage } from './bot-route-page'
 export { CreateBotModal } from './create-bot-modal'
 export { DashboardPage } from './dashboard-page'
 export { EditBotModal } from './edit-bot-modal'

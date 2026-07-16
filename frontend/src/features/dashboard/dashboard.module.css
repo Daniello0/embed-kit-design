@@ -9,6 +9,20 @@
   padding: var(--space-6);
 }
 
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: var(--space-4);
+  color: var(--secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.backLink:hover {
+  color: var(--secondary-hover);
+}
+
 .topBar {
   display: flex;
   align-items: center;
