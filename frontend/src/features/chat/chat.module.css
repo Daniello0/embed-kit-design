@@ -1,0 +1,325 @@
+.chatPage {
+  max-width: var(--content-max-width-app);
+  margin: 0 auto;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--font-size-page-title);
+  font-weight: var(--font-weight-page-title);
+  line-height: var(--line-height-page-title);
+}
+
+.description {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.chatLayout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--chat-column-max-width);
+  min-height: 560px;
+  margin: 0 auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  overflow: hidden;
+}
+
+.thread {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 420px;
+  max-height: 560px;
+  padding: var(--space-4);
+  overflow-y: auto;
+}
+
+.emptyState {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  text-align: center;
+}
+
+.emptyHint {
+  margin: 0;
+  max-width: 360px;
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-sm);
+}
+
+.suggestedTitle {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.messageList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: 85%;
+  animation: messageFadeIn var(--transition-message) ease-out;
+}
+
+.messageUser {
+  composes: message;
+  align-self: flex-end;
+}
+
+.messageAssistant {
+  composes: message;
+  align-self: flex-start;
+}
+
+.bubble {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-sm);
+  white-space: pre-wrap;
+}
+
+.bubbleUser {
+  composes: bubble;
+  background: var(--secondary-subtle);
+}
+
+.bubbleAssistant {
+  composes: bubble;
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+}
+
+.citations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.citationChip {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 240px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--primary-subtle);
+  color: var(--primary-hover);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-xs);
+  text-align: left;
+}
+
+.citationName {
+  font-weight: 600;
+}
+
+.citationExcerpt {
+  color: var(--text-secondary);
+}
+
+.suggestedQuestions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.suggestedQuestion {
+  min-height: var(--btn-height-sm);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  background: var(--primary-subtle);
+  color: var(--primary-hover);
+  font: inherit;
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+  transition:
+    background var(--transition-card-hover),
+    border-color var(--transition-card-hover);
+}
+
+.suggestedQuestion:hover {
+  border-color: var(--primary);
+  background: rgba(236, 72, 153, 0.22);
+}
+
+.suggestedQuestion:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.typingIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  align-self: flex-start;
+  min-height: 40px;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-base);
+}
+
+.typingDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--text-muted);
+  animation: typingPulse 1.2s ease-in-out infinite;
+}
+
+.typingDot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.typingDot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.inputBar {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-base);
+}
+
+.textarea {
+  flex: 1;
+  min-height: var(--textarea-min-height);
+  max-height: 160px;
+  padding: var(--space-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-sm);
+  resize: vertical;
+}
+
+.textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.textarea:focus {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 0;
+}
+
+.textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.sendButton {
+  min-height: var(--btn-height-md);
+  padding: 0 var(--btn-padding-x-md);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: var(--text-on-primary);
+  font: inherit;
+  font-size: var(--btn-font-size-md);
+  cursor: pointer;
+  transition: background var(--transition-card-hover);
+}
+
+.sendButton:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+.sendButton:disabled {
+  cursor: not-allowed;
+  background: var(--btn-disabled-bg);
+  color: var(--text-muted);
+}
+
+@keyframes messageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes typingPulse {
+  0%,
+  80%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 768px) {
+  .chatPage {
+    padding: var(--space-4);
+  }
+
+  .chatLayout {
+    min-height: 480px;
+  }
+
+  .thread {
+    min-height: 320px;
+    max-height: none;
+  }
+
+  .message {
+    max-width: 100%;
+  }
+
+  .inputBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sendButton {
+    width: 100%;
+  }
+}

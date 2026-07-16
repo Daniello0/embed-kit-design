@@ -1,7 +1,10 @@
 import { create } from 'zustand'
 import { DocumentStatus } from '@/common/enums/document-status.enum'
 import { PaywallTrigger } from '@/common/enums/paywall-trigger.enum'
+import { AUTH_MOCK } from '@/features/auth/auth.constants'
+import { createAuthenticatedUser } from '@/features/auth/auth.utils'
 import { MOCK_INITIAL_APP_STATE } from '@/common/constants/mock-seed.constants'
+import { MOCK_CHAT_RESPONSES } from '@/common/constants/mock-responses.constants'
 import type { AppDataState } from '@/common/types/app-state.types'
 import type { Bot } from '@/common/types/bot.types'
 import type { WidgetConfig } from '@/common/types/widget-config.types'
@@ -19,9 +22,15 @@ import {
   createDefaultWidgetConfig,
   mergeWidgetConfig,
 } from '@/features/widget/widget.utils'
+import { getMockResponseOrFallback } from '@/common/utils/mock-chat.utils'
+import {
+  createAssistantMessage,
+  createUserMessage,
+} from '@/features/chat/chat.utils'
 
 interface AppState extends AppDataState {
   isReady: boolean
+  chatTypingByBotId: Record<string, boolean>
   setReady: (ready: boolean) => void
   getWidgetConfig: (botId: string) => WidgetConfig
   updateWidgetConfig: (
@@ -37,6 +46,10 @@ interface AppState extends AppDataState {
   ) => void
   openPaywall: (trigger: PaywallTrigger) => void
   closePaywall: () => void
+  sendMessage: (botId: string, text: string) => boolean
+  login: (email: string) => void
+  loginWithGoogle: () => void
+  logout: () => void
 }
 
 /**
@@ -86,11 +99,43 @@ function scheduleDocumentProcessing(botId: string, documentId: string): void {
 }
 
 /**
+ * Schedules a mock assistant reply for a user message.
+ */
+function scheduleAssistantReply(botId: string, query: string): void {
+  const response = getMockResponseOrFallback(query, MOCK_CHAT_RESPONSES)
+
+  window.setTimeout(() => {
+    const assistantMessage = createAssistantMessage(
+      response.content,
+      response.citations,
+    )
+
+    useAppStore.setState((state) => ({
+      chat: {
+        ...state.chat,
+        [botId]: [...(state.chat[botId] ?? []), assistantMessage],
+      },
+      chatTypingByBotId: {
+        ...state.chatTypingByBotId,
+        [botId]: false,
+      },
+      ui: state.ui.hasReachedAhaMoment
+        ? state.ui
+        : {
+            ...state.ui,
+            hasReachedAhaMoment: true,
+          },
+    }))
+  }, response.delayMs)
+}
+
+/**
  * Global application store for cross-feature UI state.
  */
 export const useAppStore = create<AppState>((set, get) => ({
   ...MOCK_INITIAL_APP_STATE,
   isReady: false,
+  chatTypingByBotId: {},
   setReady: (ready) => set({ isReady: ready }),
   getWidgetConfig: (botId) => {
     const existing = get().widgetConfigs[botId]
@@ -226,6 +271,41 @@ export const useAppStore = create<AppState>((set, get) => ({
       },
     }))
   },
+  sendMessage: (botId, text) => {
+    const trimmed = text.trim()
+    if (!trimmed) {
+      return false
+    }
+
+    const userMessage = createUserMessage(trimmed)
+
+    set((state) => ({
+      chat: {
+        ...state.chat,
+        [botId]: [...(state.chat[botId] ?? []), userMessage],
+      },
+      chatTypingByBotId: {
+        ...state.chatTypingByBotId,
+        [botId]: true,
+      },
+    }))
+
+    scheduleAssistantReply(botId, trimmed)
+    return true
+  },
+  login: (email) => {
+    set({ user: createAuthenticatedUser(email) })
+  },
+  loginWithGoogle: () => {
+    set({ user: createAuthenticatedUser(AUTH_MOCK.GOOGLE_EMAIL) })
+  },
+  logout: () => {
+    set({
+      ...MOCK_INITIAL_APP_STATE,
+      isReady: get().isReady,
+      chatTypingByBotId: {},
+    })
+  },
 }))
 
 /**
@@ -235,5 +315,6 @@ export function resetAppStore(): void {
   useAppStore.setState({
     ...MOCK_INITIAL_APP_STATE,
     isReady: false,
+    chatTypingByBotId: {},
   })
 }

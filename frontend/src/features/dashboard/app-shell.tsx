@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { APP_NAME } from '@/common/constants/app.constants'
 import { ROUTES } from '@/common/constants/routes.constants'
 import { PlanBadge } from '@/common/components/plan-badge'
-import { resetAppStore, useAppStore } from '@/common/stores/app.store'
+import { useAppStore } from '@/common/stores/app.store'
 import { DASHBOARD_COPY } from './dashboard.constants'
 import styles from './dashboard.module.css'
 
@@ -19,10 +19,11 @@ export function AppShell({ title, children }: AppShellProps) {
   const navigate = useNavigate()
   const plan = useAppStore((state) => state.user.plan)
   const email = useAppStore((state) => state.user.email)
+  const logout = useAppStore((state) => state.logout)
   const [menuOpen, setMenuOpen] = useState(false)
 
   const handleLogout = () => {
-    resetAppStore()
+    logout()
     navigate(ROUTES.HOME)
   }
 
