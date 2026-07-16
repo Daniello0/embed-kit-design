@@ -1,11 +1,13 @@
 import { fireEvent, render, screen } from '@testing-library/react'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { describe, expect, it, beforeEach } from 'vitest'
 import { DocumentStatus } from '@/common/enums/document-status.enum'
-import { PaywallTrigger } from '@/common/enums/paywall-trigger.enum'
 import { MOCK_DOCUMENTS } from '@/common/constants/mock-documents.constants'
 import { MOCK_IDS } from '@/common/constants/mock-ids.constants'
 import { MOCK_DEMO_APP_STATE } from '@/common/constants/mock-seed.constants'
+import { ROUTES } from '@/common/constants/routes.constants'
 import { resetAppStore, useAppStore } from '@/common/stores/app.store'
+import { PricingPage } from '@/features/pricing/pricing-page'
 import { KnowledgePage } from './knowledge-page'
 
 describe('KnowledgePage', () => {
@@ -13,10 +15,24 @@ describe('KnowledgePage', () => {
     resetAppStore()
   })
 
+  function renderKnowledgePage() {
+    return render(
+      <MemoryRouter initialEntries={[`/app/bot/${MOCK_IDS.BOT}/knowledge`]}>
+        <Routes>
+          <Route
+            path="/app/bot/:botId/knowledge"
+            element={<KnowledgePage botId={MOCK_IDS.BOT} />}
+          />
+          <Route path={ROUTES.PRICING} element={<PricingPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+  }
+
   it('renders upload and document sections', () => {
     useAppStore.setState(MOCK_DEMO_APP_STATE)
 
-    render(<KnowledgePage botId={MOCK_IDS.BOT} />)
+    renderKnowledgePage()
 
     expect(
       screen.getByRole('heading', { name: 'Knowledge base' }),
@@ -29,7 +45,7 @@ describe('KnowledgePage', () => {
   })
 
   it('shows empty state when no documents exist', () => {
-    render(<KnowledgePage botId={MOCK_IDS.BOT} />)
+    renderKnowledgePage()
 
     expect(
       screen.getByText('No documents yet. Upload your first file above.'),
@@ -39,7 +55,7 @@ describe('KnowledgePage', () => {
   it('adds a document from the file picker', () => {
     useAppStore.setState(MOCK_DEMO_APP_STATE)
 
-    render(<KnowledgePage botId={MOCK_IDS.BOT} />)
+    renderKnowledgePage()
 
     const input = document.querySelector(
       'input[type="file"]',
@@ -55,7 +71,7 @@ describe('KnowledgePage', () => {
   })
 
   it('shows invalid file feedback', () => {
-    render(<KnowledgePage botId={MOCK_IDS.BOT} />)
+    renderKnowledgePage()
 
     const input = document.querySelector(
       'input[type="file"]',
@@ -69,7 +85,7 @@ describe('KnowledgePage', () => {
     ).toBeInTheDocument()
   })
 
-  it('shows upgrade banner and opens paywall at the document limit', () => {
+  it('shows upgrade banner and navigates to pricing at the document limit', () => {
     useAppStore.setState({
       ...MOCK_DEMO_APP_STATE,
       documents: {
@@ -83,14 +99,13 @@ describe('KnowledgePage', () => {
       ui: { ...MOCK_DEMO_APP_STATE.ui, hasReachedAhaMoment: true },
     })
 
-    render(<KnowledgePage botId={MOCK_IDS.BOT} />)
+    renderKnowledgePage()
 
     expect(screen.getByText('Document limit reached')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Upgrade to Pro' }))
 
-    expect(useAppStore.getState().ui.paywallOpen).toBe(true)
-    expect(useAppStore.getState().ui.paywallTrigger).toBe(
-      PaywallTrigger.DOCUMENT_LIMIT,
-    )
+    expect(
+      screen.getByRole('heading', { name: 'Pricing', level: 1 }),
+    ).toBeInTheDocument()
   })
 })

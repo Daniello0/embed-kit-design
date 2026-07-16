@@ -1,5 +1,5 @@
 import { useRef, useState, type DragEvent } from 'react'
-import { PaywallTrigger } from '@/common/enums/paywall-trigger.enum'
+import { useUpgradeNavigation } from '@/common/hooks/use-upgrade-navigation'
 import { useAppStore } from '@/common/stores/app.store'
 import type { Document } from '@/common/types/document.types'
 import { KNOWLEDGE_COPY } from './knowledge.constants'
@@ -46,14 +46,14 @@ export function DocumentUploadZone({ botId }: DocumentUploadZoneProps) {
     (state) => state.documents[botId] ?? EMPTY_DOCUMENTS,
   )
   const addDocument = useAppStore((state) => state.addDocument)
-  const openPaywall = useAppStore((state) => state.openPaywall)
+  const navigateToPricing = useUpgradeNavigation()
   const atLimit = isDocumentLimitReached(documents.length, plan)
 
   const handleFiles = (files: FileList | File[]) => {
     setErrorMessage(null)
 
     if (atLimit) {
-      openPaywall(PaywallTrigger.DOCUMENT_LIMIT)
+      navigateToPricing()
       return
     }
 
@@ -144,7 +144,7 @@ export function DocumentUploadZone({ botId }: DocumentUploadZoneProps) {
           <button
             type="button"
             className={styles.secondaryButton}
-            onClick={() => openPaywall(PaywallTrigger.DOCUMENT_LIMIT)}
+            onClick={navigateToPricing}
           >
             {KNOWLEDGE_COPY.UPGRADE_BANNER_CTA}
           </button>

@@ -1,4 +1,9 @@
 import { EXPLAINER_STEPS, LANDING_COPY } from './landing.constants'
+import {
+  ChatStepPreview,
+  EmbedStepPreview,
+  UploadStepPreview,
+} from './explainer-step-previews'
 import styles from './landing.module.css'
 
 const STEP_ICONS: Record<string, string> = {
@@ -7,8 +12,14 @@ const STEP_ICONS: Record<string, string> = {
   embed: 'M16 18l6-6-6-6M8 6l-6 6 6 6',
 }
 
+const STEP_PREVIEWS = {
+  upload: UploadStepPreview,
+  test: ChatStepPreview,
+  embed: EmbedStepPreview,
+} as const
+
 /**
- * Upload, test, and embed three-step explainer.
+ * Vertical upload → test → embed explainer with large alternating previews.
  */
 export function ExplainerSteps() {
   return (
@@ -17,31 +28,48 @@ export function ExplainerSteps() {
         {LANDING_COPY.EXPLAINER_TITLE}
       </h2>
 
-      <div className={styles.explainerGrid}>
-        {EXPLAINER_STEPS.map((step) => (
-          <article key={step.id} className={styles.explainerStep}>
-            <div className={styles.stepIcon}>
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.5}
-                aria-hidden="true"
-              >
-                <path
-                  d={STEP_ICONS[step.id]}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-            <h3 className={styles.stepTitle}>{step.title}</h3>
-            <p className={styles.stepDescription}>{step.description}</p>
-          </article>
-        ))}
-      </div>
+      <ol className={styles.explainerFlow}>
+        {EXPLAINER_STEPS.map((step, index) => {
+          const Preview = STEP_PREVIEWS[step.id as keyof typeof STEP_PREVIEWS]
+          const reversed = index % 2 === 1
+
+          return (
+            <li
+              key={step.id}
+              className={
+                reversed
+                  ? styles.explainerFlowStepReverse
+                  : styles.explainerFlowStep
+              }
+            >
+              <div className={styles.explainerFlowVisual}>
+                <Preview />
+              </div>
+              <div className={styles.explainerFlowContent}>
+                <div className={styles.stepIcon}>
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                  >
+                    <path
+                      d={STEP_ICONS[step.id]}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+                <h3 className={styles.stepTitle}>{step.title}</h3>
+                <p className={styles.stepDescription}>{step.description}</p>
+              </div>
+            </li>
+          )
+        })}
+      </ol>
     </section>
   )
 }

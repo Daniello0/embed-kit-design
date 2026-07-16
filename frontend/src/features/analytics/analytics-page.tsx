@@ -1,5 +1,5 @@
-import { PaywallTrigger } from '@/common/enums/paywall-trigger.enum'
 import { useAppStore } from '@/common/stores/app.store'
+import { useUpgradeNavigation } from '@/common/hooks/use-upgrade-navigation'
 import { AnalyticsDashboard } from './analytics-dashboard'
 import { AnalyticsGate } from './analytics-gate'
 import { ANALYTICS_COPY } from './analytics.constants'
@@ -15,7 +15,7 @@ interface AnalyticsPageProps {
  */
 export function AnalyticsPage({ botId }: AnalyticsPageProps) {
   const plan = useAppStore((state) => state.user.plan)
-  const openPaywall = useAppStore((state) => state.openPaywall)
+  const navigateToPricing = useUpgradeNavigation()
   const locked = isAnalyticsLocked(plan)
 
   return (
@@ -25,10 +25,7 @@ export function AnalyticsPage({ botId }: AnalyticsPageProps) {
         <p className={styles.description}>{ANALYTICS_COPY.PAGE_DESCRIPTION}</p>
       </header>
 
-      <AnalyticsGate
-        locked={locked}
-        onUpgradeClick={() => openPaywall(PaywallTrigger.ANALYTICS)}
-      >
+      <AnalyticsGate locked={locked} onUpgradeClick={navigateToPricing}>
         <AnalyticsDashboard />
       </AnalyticsGate>
     </section>

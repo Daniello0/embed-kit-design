@@ -1,4 +1,3 @@
-export { ExamplesSection } from './examples-section'
 export { ExplainerSteps } from './explainer-steps'
 export { GradientBackground } from './gradient-background'
 export { HeroSection } from './hero-section'

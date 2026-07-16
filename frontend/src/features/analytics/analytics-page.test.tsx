@@ -1,9 +1,11 @@
 import { fireEvent, render, screen } from '@testing-library/react'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { PlanTier } from '@/common/enums/plan-tier.enum'
-import { PaywallTrigger } from '@/common/enums/paywall-trigger.enum'
 import { MOCK_IDS } from '@/common/constants/mock-ids.constants'
+import { ROUTES } from '@/common/constants/routes.constants'
 import { resetAppStore, useAppStore } from '@/common/stores/app.store'
+import { PricingPage } from '@/features/pricing/pricing-page'
 import { AnalyticsPage } from './analytics-page'
 import { ANALYTICS_COPY } from './analytics.constants'
 import * as analyticsUtils from './analytics.utils'
@@ -14,12 +16,26 @@ describe('AnalyticsPage', () => {
     vi.restoreAllMocks()
   })
 
+  function renderAnalyticsPage() {
+    return render(
+      <MemoryRouter initialEntries={[`/app/bot/${MOCK_IDS.BOT}/analytics`]}>
+        <Routes>
+          <Route
+            path="/app/bot/:botId/analytics"
+            element={<AnalyticsPage botId={MOCK_IDS.BOT} />}
+          />
+          <Route path={ROUTES.PRICING} element={<PricingPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+  }
+
   it('renders analytics overview for Pro users', () => {
     useAppStore.setState((state) => ({
       user: { ...state.user, plan: PlanTier.PRO },
     }))
 
-    render(<AnalyticsPage botId={MOCK_IDS.BOT} />)
+    renderAnalyticsPage()
 
     expect(
       screen.getByRole('heading', { name: ANALYTICS_COPY.PAGE_TITLE }),
@@ -33,7 +49,7 @@ describe('AnalyticsPage', () => {
   })
 
   it('shows a blurred gate on the Free plan', () => {
-    render(<AnalyticsPage botId={MOCK_IDS.BOT} />)
+    renderAnalyticsPage()
 
     expect(screen.getByText(ANALYTICS_COPY.GATE_TITLE)).toBeInTheDocument()
     expect(
@@ -42,21 +58,16 @@ describe('AnalyticsPage', () => {
     expect(screen.getByText('1,284')).toBeInTheDocument()
   })
 
-  it('opens the analytics paywall from the gate', () => {
-    useAppStore.setState((state) => ({
-      ui: { ...state.ui, hasReachedAhaMoment: true },
-    }))
-
-    render(<AnalyticsPage botId={MOCK_IDS.BOT} />)
+  it('navigates to pricing from the gate', () => {
+    renderAnalyticsPage()
 
     fireEvent.click(
       screen.getByRole('button', { name: ANALYTICS_COPY.GATE_CTA }),
     )
 
-    expect(useAppStore.getState().ui.paywallOpen).toBe(true)
-    expect(useAppStore.getState().ui.paywallTrigger).toBe(
-      PaywallTrigger.ANALYTICS,
-    )
+    expect(
+      screen.getByRole('heading', { name: 'Pricing', level: 1 }),
+    ).toBeInTheDocument()
   })
 
   it('shows export for Business users and downloads CSV', () => {
@@ -68,7 +79,7 @@ describe('AnalyticsPage', () => {
       .spyOn(analyticsUtils, 'downloadAnalyticsExport')
       .mockImplementation(() => undefined)
 
-    render(<AnalyticsPage botId={MOCK_IDS.BOT} />)
+    renderAnalyticsPage()
 
     fireEvent.click(
       screen.getByRole('button', { name: ANALYTICS_COPY.EXPORT_BUTTON }),

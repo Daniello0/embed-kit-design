@@ -1,9 +1,26 @@
 import { fireEvent, render, screen } from '@testing-library/react'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { describe, expect, it, beforeEach } from 'vitest'
 import { PlanTier } from '@/common/enums/plan-tier.enum'
 import { MOCK_IDS } from '@/common/constants/mock-ids.constants'
+import { ROUTES } from '@/common/constants/routes.constants'
 import { resetAppStore, useAppStore } from '@/common/stores/app.store'
+import { PricingPage } from '@/features/pricing/pricing-page'
 import { WidgetPage } from './widget-page'
+
+function renderWidgetPage() {
+  return render(
+    <MemoryRouter initialEntries={[`/app/bot/${MOCK_IDS.BOT}/widget`]}>
+      <Routes>
+        <Route
+          path="/app/bot/:botId/widget"
+          element={<WidgetPage botId={MOCK_IDS.BOT} />}
+        />
+        <Route path={ROUTES.PRICING} element={<PricingPage />} />
+      </Routes>
+    </MemoryRouter>,
+  )
+}
 
 describe('WidgetPage', () => {
   beforeEach(() => {
@@ -11,7 +28,7 @@ describe('WidgetPage', () => {
   })
 
   it('renders settings and preview panels', () => {
-    render(<WidgetPage botId={MOCK_IDS.BOT} />)
+    renderWidgetPage()
 
     expect(
       screen.getByRole('heading', { name: 'Widget builder' }),
@@ -21,7 +38,11 @@ describe('WidgetPage', () => {
   })
 
   it('saves welcome message updates to the store', () => {
-    render(<WidgetPage botId={MOCK_IDS.BOT} />)
+    useAppStore.setState((state) => ({
+      user: { ...state.user, plan: PlanTier.PRO },
+    }))
+
+    renderWidgetPage()
 
     const welcomeInput = screen.getByLabelText('Welcome message')
     fireEvent.change(welcomeInput, {
@@ -35,20 +56,30 @@ describe('WidgetPage', () => {
   })
 
   it('shows branding lock on the Free plan', () => {
-    render(<WidgetPage botId={MOCK_IDS.BOT} />)
+    renderWidgetPage()
 
     expect(
       screen.getByText('Custom branding is a Pro feature'),
     ).toBeInTheDocument()
-    expect(screen.getByLabelText('Bubble color')).toBeDisabled()
+    expect(screen.getByLabelText('Welcome message')).toBeInTheDocument()
   })
 
-  it('unlocks color picker on Pro plan', () => {
+  it('navigates to pricing from the branding gate', () => {
+    renderWidgetPage()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Upgrade to Pro' }))
+
+    expect(
+      screen.getByRole('heading', { name: 'Pricing', level: 1 }),
+    ).toBeInTheDocument()
+  })
+
+  it('unlocks customization on Pro plan', () => {
     useAppStore.setState((state) => ({
       user: { ...state.user, plan: PlanTier.PRO },
     }))
 
-    render(<WidgetPage botId={MOCK_IDS.BOT} />)
+    renderWidgetPage()
 
     expect(
       screen.queryByText('Custom branding is a Pro feature'),

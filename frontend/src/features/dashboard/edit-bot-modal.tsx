@@ -15,6 +15,7 @@ interface EditBotFormProps {
  */
 function EditBotForm({ bot, onClose }: EditBotFormProps) {
   const updateBot = useAppStore((state) => state.updateBot)
+  const deleteBot = useAppStore((state) => state.deleteBot)
   const [name, setName] = useState(bot.name)
   const [avatarUrl, setAvatarUrl] = useState(bot.avatarUrl ?? '')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -31,6 +32,11 @@ function EditBotForm({ bot, onClose }: EditBotFormProps) {
       name,
       avatarUrl: avatarUrl.trim() || null,
     })
+    onClose()
+  }
+
+  const handleDelete = () => {
+    deleteBot(bot.id)
     onClose()
   }
 
@@ -64,6 +70,13 @@ function EditBotForm({ bot, onClose }: EditBotFormProps) {
         </p>
       ) : null}
       <div className={styles.modalActions}>
+        <button
+          type="button"
+          className={styles.dangerButton}
+          onClick={handleDelete}
+        >
+          {DASHBOARD_COPY.DELETE_BOT}
+        </button>
         <button
           type="button"
           className={styles.secondaryButton}

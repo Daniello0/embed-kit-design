@@ -1,10 +1,27 @@
 .page {
   display: flex;
   min-height: 100vh;
+  flex-direction: column;
+  background: var(--bg-base);
+}
+
+.topBar {
+  padding: var(--space-4) var(--content-padding-x);
+}
+
+.logo {
+  color: var(--text-primary);
+  font-size: var(--font-size-section);
+  font-weight: var(--font-weight-section);
+  text-decoration: none;
+}
+
+.main {
+  display: flex;
+  flex: 1;
   align-items: center;
   justify-content: center;
   padding: var(--space-6);
-  background: var(--bg-base);
 }
 
 .card {
@@ -14,15 +31,6 @@
   border-radius: var(--radius-lg);
   background: var(--bg-surface);
   box-shadow: var(--shadow-card);
-}
-
-.logo {
-  display: inline-block;
-  margin-bottom: var(--space-6);
-  color: var(--text-primary);
-  font-size: var(--font-size-section);
-  font-weight: var(--font-weight-section);
-  text-decoration: none;
 }
 
 .heading {
@@ -133,7 +141,7 @@
   border-radius: var(--radius-full);
   background: var(--text-on-primary);
   color: #4285f4;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
 }
 
@@ -162,7 +170,7 @@
 }
 
 @media (max-width: 768px) {
-  .page {
+  .main {
     padding: var(--space-4);
   }
 

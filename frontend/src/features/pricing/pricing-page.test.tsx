@@ -133,6 +133,13 @@ describe('PricingPage', () => {
       </MemoryRouter>,
     )
 
+    expect(
+      screen.getByText(MOCK_DEMO_APP_STATE.user.email!),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Log out' })).toBeInTheDocument()
+    expect(
+      screen.queryByRole('link', { name: 'Log in' }),
+    ).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Current plan' })).toBeDisabled()
     expect(
       screen.getByRole('button', { name: 'Upgrade to Business' }),

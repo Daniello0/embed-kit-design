@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { RouterProvider, createMemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { ROUTES } from '@/common/constants/routes.constants'
@@ -21,12 +21,14 @@ describe('router', () => {
     resetAppStore()
   })
 
-  it('renders the landing page at the root route', () => {
+  it('renders the landing page at the root route', async () => {
     renderRoute(ROUTES.HOME)
 
-    expect(
-      screen.getByText(/Turn your docs into a chatbot/i),
-    ).toBeInTheDocument()
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Turn your docs into a chatbot/i),
+      ).toBeInTheDocument()
+    })
   })
 
   it('redirects guests away from protected bot routes', () => {

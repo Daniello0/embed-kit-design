@@ -151,6 +151,17 @@ describe('useAppStore', () => {
     expect(useAppStore.getState().bots[0]?.avatarUrl).toBe('/new-avatar.png')
   })
 
+  it('deletes a bot and its related data', () => {
+    useAppStore.setState(MOCK_DEMO_APP_STATE)
+
+    useAppStore.getState().deleteBot(MOCK_IDS.BOT)
+
+    expect(useAppStore.getState().bots).toHaveLength(0)
+    expect(useAppStore.getState().documents[MOCK_IDS.BOT]).toBeUndefined()
+    expect(useAppStore.getState().widgetConfigs[MOCK_IDS.BOT]).toBeUndefined()
+    expect(useAppStore.getState().ui.activeBotId).toBeNull()
+  })
+
   it('rejects empty chat messages', () => {
     useAppStore.setState(MOCK_DEMO_APP_STATE)
 

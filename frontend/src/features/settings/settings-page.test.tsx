@@ -38,6 +38,10 @@ describe('Settings feature', () => {
   it('renders sidebar tabs and profile content', () => {
     renderSettingsRoute(ROUTES.SETTINGS_PROFILE)
 
+    expect(screen.getByRole('link', { name: 'EmbedKit' })).toHaveAttribute(
+      'href',
+      ROUTES.HOME,
+    )
     expect(
       screen.getByRole('heading', { name: 'Settings' }),
     ).toBeInTheDocument()
@@ -57,8 +61,8 @@ describe('Settings feature', () => {
       screen.getByText('Widget with EmbedKit watermark'),
     ).toBeInTheDocument()
     expect(
-      screen.getByRole('button', { name: 'Upgrade to Pro' }),
-    ).toBeInTheDocument()
+      screen.getByRole('link', { name: 'Upgrade to Pro' }),
+    ).toHaveAttribute('href', ROUTES.PRICING)
   })
 
   it('shows team gate on the Free plan', () => {

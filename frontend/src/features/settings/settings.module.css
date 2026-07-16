@@ -1,32 +1,44 @@
+.page {
+  min-height: 100vh;
+  background: var(--bg-base);
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  min-height: 64px;
+  padding: 0 var(--content-padding-x);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+}
+
+.logo {
+  color: var(--text-primary);
+  font-size: var(--font-size-section);
+  font-weight: var(--font-weight-section);
+  text-decoration: none;
+}
+
 .settingsPage {
   display: grid;
   grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
-  gap: var(--space-6);
-  max-width: var(--content-max-width-app);
-  margin: 0 auto;
-  padding: var(--space-6);
+  grid-template-rows: auto 1fr;
+  gap: var(--space-4) var(--space-6);
+  width: 100%;
+  padding: var(--content-padding-y) var(--content-padding-x);
 }
 
 .header {
   grid-column: 1 / -1;
-}
-
-.title {
-  margin: 0 0 var(--space-2);
-  font-size: var(--font-size-page-title);
-  font-weight: var(--font-weight-page-title);
-  line-height: var(--line-height-page-title);
-}
-
-.description {
-  margin: 0;
-  color: var(--text-secondary);
+  grid-row: 1;
 }
 
 .sidebar {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+  grid-row: 2;
+  grid-column: 1;
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
@@ -68,14 +80,28 @@
 }
 
 .content {
+  grid-row: 2;
+  grid-column: 2;
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: var(--space-5);
 }
 
+.title {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-page-title);
+  font-weight: var(--font-weight-page-title);
+  line-height: var(--line-height-page-title);
+}
+
+.description {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
 .sectionHeader {
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-4);
 }
 
 .sectionTitle {
@@ -97,12 +123,19 @@
   flex-direction: column;
   gap: var(--space-4);
   margin: 0;
+  max-width: 100%;
 }
 
 .field {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+}
+
+.field dt,
+.field dd {
+  margin: 0;
+  padding: 0;
 }
 
 .fieldLabel {
@@ -177,11 +210,16 @@
 .primaryButton,
 .secondaryButton,
 .ghostButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-height: var(--btn-height-md);
   padding: 0 var(--btn-padding-x-md);
   border-radius: var(--radius-sm);
   font: inherit;
   font-size: var(--btn-font-size-md);
+  line-height: 1;
+  text-decoration: none;
   cursor: pointer;
   transition: background var(--transition-card-hover);
 }

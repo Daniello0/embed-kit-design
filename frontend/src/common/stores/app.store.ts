@@ -44,6 +44,7 @@ interface AppState extends AppDataState {
     botId: string,
     patch: Partial<Pick<Bot, 'name' | 'avatarUrl'>>,
   ) => void
+  deleteBot: (botId: string) => void
   openPaywall: (trigger: PaywallTrigger) => void
   closePaywall: () => void
   sendMessage: (botId: string, text: string) => boolean
@@ -247,6 +248,34 @@ export const useAppStore = create<AppState>((set, get) => ({
           : bot,
       ),
     }))
+  },
+  deleteBot: (botId) => {
+    set((currentState) => {
+      const nextDocuments = { ...currentState.documents }
+      delete nextDocuments[botId]
+
+      const nextChat = { ...currentState.chat }
+      delete nextChat[botId]
+
+      const nextWidgetConfigs = { ...currentState.widgetConfigs }
+      delete nextWidgetConfigs[botId]
+
+      const nextBots = currentState.bots.filter((bot) => bot.id !== botId)
+      const wasActiveBot = currentState.ui.activeBotId === botId
+
+      return {
+        bots: nextBots,
+        documents: nextDocuments,
+        chat: nextChat,
+        widgetConfigs: nextWidgetConfigs,
+        ui: {
+          ...currentState.ui,
+          activeBotId: wasActiveBot
+            ? (nextBots[0]?.id ?? null)
+            : currentState.ui.activeBotId,
+        },
+      }
+    })
   },
   openPaywall: (trigger) => {
     const { hasReachedAhaMoment } = get().ui

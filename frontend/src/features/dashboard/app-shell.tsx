@@ -30,7 +30,7 @@ export function AppShell({ title, children }: AppShellProps) {
   return (
     <div className={styles.dashboardPage}>
       <header className={styles.topBar}>
-        <Link className={styles.logo} to={ROUTES.APP}>
+        <Link className={styles.logo} to={ROUTES.HOME}>
           {APP_NAME}
         </Link>
         <h1 className={styles.pageTitle}>{title}</h1>

@@ -5,6 +5,11 @@
   animation: pageFadeIn var(--transition-page) ease-out;
 }
 
+.pageLoader {
+  min-height: 100vh;
+  background: var(--bg-base);
+}
+
 .main {
   position: relative;
   z-index: 1;

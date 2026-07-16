@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import { PlanBadge } from '@/common/components/plan-badge'
 import { ROUTES } from '@/common/constants/routes.constants'
 import { PlanTier } from '@/common/enums/plan-tier.enum'
-import { PaywallTrigger } from '@/common/enums/paywall-trigger.enum'
 import { useAppStore } from '@/common/stores/app.store'
 import { SETTINGS_COPY } from './settings.constants'
 import { getPricingPlanByTier } from './settings.utils'
@@ -24,7 +23,6 @@ function formatMonthlyPrice(price: number): string {
  */
 export function BillingSettings() {
   const plan = useAppStore((state) => state.user.plan)
-  const openPaywall = useAppStore((state) => state.openPaywall)
   const currentPlan = getPricingPlanByTier(plan)
 
   if (!currentPlan) {
@@ -67,23 +65,15 @@ export function BillingSettings() {
 
         <div className={styles.actionRow}>
           {plan === PlanTier.FREE ? (
-            <button
-              type="button"
-              className={styles.primaryButton}
-              onClick={() => openPaywall(PaywallTrigger.WIDGET_BRANDING)}
-            >
+            <Link className={styles.primaryButton} to={ROUTES.PRICING}>
               {SETTINGS_COPY.UPGRADE_TO_PRO}
-            </button>
+            </Link>
           ) : null}
 
           {plan !== PlanTier.BUSINESS ? (
-            <button
-              type="button"
-              className={styles.secondaryButton}
-              onClick={() => openPaywall(PaywallTrigger.TEAM)}
-            >
+            <Link className={styles.secondaryButton} to={ROUTES.PRICING}>
               {SETTINGS_COPY.UPGRADE_TO_BUSINESS}
-            </button>
+            </Link>
           ) : null}
 
           <Link className={styles.ghostButton} to={ROUTES.PRICING}>

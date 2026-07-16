@@ -1,13 +1,15 @@
+import { LANDING_IMAGES } from './landing.constants'
 import styles from './landing.module.css'
 
 /**
- * Curved pink and purple stripe bands for the hero.
+ * Hero image backdrop for the top of the landing page.
  */
 export function GradientBackground() {
   return (
-    <div className={styles.gradientBackground} aria-hidden="true">
-      <div className={styles.gradientBandPink} />
-      <div className={styles.gradientBandPurple} />
-    </div>
+    <div
+      className={styles.heroBackground}
+      style={{ backgroundImage: `url(${LANDING_IMAGES.HERO})` }}
+      aria-hidden="true"
+    />
   )
 }

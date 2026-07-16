@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { PaywallTrigger } from '@/common/enums/paywall-trigger.enum'
+import { useUpgradeNavigation } from '@/common/hooks/use-upgrade-navigation'
 import { useAppStore } from '@/common/stores/app.store'
 import { createDefaultWidgetConfig } from '@/features/widget/widget.utils'
 import { DEPLOY_COPY } from './deploy.constants'
@@ -91,7 +91,7 @@ function MiniWidgetPreview({
  */
 export function WatermarkPreview({ botId }: WatermarkPreviewProps) {
   const plan = useAppStore((state) => state.user.plan)
-  const openPaywall = useAppStore((state) => state.openPaywall)
+  const navigateToPricing = useUpgradeNavigation()
   const storedConfigEntry = useAppStore((state) => state.widgetConfigs[botId])
   const config = useMemo(
     () => storedConfigEntry ?? createDefaultWidgetConfig(botId),
@@ -113,7 +113,7 @@ export function WatermarkPreview({ botId }: WatermarkPreviewProps) {
         welcomeMessage={config.welcomeMessage}
         bubbleColor={config.bubbleColor}
         locked={watermarkLocked}
-        onUpgradeClick={() => openPaywall(PaywallTrigger.WATERMARK)}
+        onUpgradeClick={navigateToPricing}
       />
     </div>
   )

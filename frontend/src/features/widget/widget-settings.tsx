@@ -1,13 +1,10 @@
 import { useMemo, useState } from 'react'
-import { PaywallTrigger } from '@/common/enums/paywall-trigger.enum'
 import { useAppStore } from '@/common/stores/app.store'
 import type { WidgetConfig } from '@/common/types/widget-config.types'
-import { BrandingLock } from './branding-lock'
 import { WIDGET_COPY } from './widget.constants'
 import {
   createDefaultWidgetConfig,
   getSuggestedQuestionLimit,
-  isWidgetBrandingLocked,
 } from './widget.utils'
 import styles from './widget.module.css'
 
@@ -46,10 +43,8 @@ function WidgetSettingsForm({
 }: WidgetSettingsFormProps) {
   const plan = useAppStore((state) => state.user.plan)
   const updateWidgetConfig = useAppStore((state) => state.updateWidgetConfig)
-  const openPaywall = useAppStore((state) => state.openPaywall)
   const [draft, setDraft] = useState(() => createDraft(initialConfig))
   const [saved, setSaved] = useState(false)
-  const brandingLocked = isWidgetBrandingLocked(plan)
   const questionLimit = getSuggestedQuestionLimit(plan)
   const canAddQuestion = draft.suggestedQuestions.length < questionLimit
 
@@ -116,30 +111,24 @@ function WidgetSettingsForm({
         <label className={styles.label} htmlFor={`bubble-color-${botId}`}>
           {WIDGET_COPY.BUBBLE_COLOR_LABEL}
         </label>
-        <BrandingLock
-          locked={brandingLocked}
-          onUpgradeClick={() => openPaywall(PaywallTrigger.WIDGET_BRANDING)}
-        >
-          <div className={styles.colorRow}>
-            <input
-              id={`bubble-color-${botId}`}
-              className={styles.colorInput}
-              type="color"
-              value={draft.bubbleColor}
-              disabled={brandingLocked}
-              onChange={(event) => {
-                setDraft((current) => ({
-                  ...current,
-                  bubbleColor: event.target.value,
-                }))
-                setSaved(false)
-              }}
-            />
-            <span className={styles.colorValue}>
-              {draft.bubbleColor.toUpperCase()}
-            </span>
-          </div>
-        </BrandingLock>
+        <div className={styles.colorRow}>
+          <input
+            id={`bubble-color-${botId}`}
+            className={styles.colorInput}
+            type="color"
+            value={draft.bubbleColor}
+            onChange={(event) => {
+              setDraft((current) => ({
+                ...current,
+                bubbleColor: event.target.value,
+              }))
+              setSaved(false)
+            }}
+          />
+          <span className={styles.colorValue}>
+            {draft.bubbleColor.toUpperCase()}
+          </span>
+        </div>
       </div>
 
       <div className={styles.field}>

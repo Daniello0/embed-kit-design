@@ -29,6 +29,10 @@ describe('AuthPage', () => {
   it('renders signup copy on the signup route', () => {
     renderAuthRoute(ROUTES.SIGNUP)
 
+    expect(screen.getByRole('link', { name: 'EmbedKit' })).toHaveAttribute(
+      'href',
+      ROUTES.HOME,
+    )
     expect(
       screen.getByRole('heading', { name: AUTH_COPY.SIGNUP_HEADING }),
     ).toBeInTheDocument()

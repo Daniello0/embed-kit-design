@@ -1,4 +1,10 @@
 import { Link } from 'react-router-dom'
+import { ActionTooltip } from '@/common/components/action-tooltip'
+import {
+  BotEditIcon,
+  BotKnowledgeIcon,
+  BotViewIcon,
+} from '@/common/components/bot-action-icon'
 import { BotStatus } from '@/common/enums/bot-status.enum'
 import { botRoutes } from '@/common/constants/routes.constants'
 import type { Bot } from '@/common/types/bot.types'
@@ -40,20 +46,24 @@ export function BotCard({ bot, onEdit }: BotCardProps) {
   return (
     <article className={styles.botCard}>
       <div className={styles.cardActionsTop}>
-        <Link
-          className={styles.iconButton}
-          to={botRoutes.chat(bot.id)}
-          aria-label={DASHBOARD_COPY.VIEW_BOT}
-        >
-          👁
-        </Link>
-        <Link
-          className={styles.iconButton}
-          to={botRoutes.knowledge(bot.id)}
-          aria-label={DASHBOARD_COPY.KNOWLEDGE_BASE}
-        >
-          📖
-        </Link>
+        <ActionTooltip label={DASHBOARD_COPY.VIEW_BOT_TOOLTIP}>
+          <Link
+            className={styles.iconButton}
+            to={botRoutes.chat(bot.id)}
+            aria-label={DASHBOARD_COPY.VIEW_BOT}
+          >
+            <BotViewIcon />
+          </Link>
+        </ActionTooltip>
+        <ActionTooltip label={DASHBOARD_COPY.KNOWLEDGE_TOOLTIP}>
+          <Link
+            className={styles.iconButton}
+            to={botRoutes.knowledge(bot.id)}
+            aria-label={DASHBOARD_COPY.KNOWLEDGE_BASE}
+          >
+            <BotKnowledgeIcon />
+          </Link>
+        </ActionTooltip>
       </div>
 
       <div className={styles.cardBody}>
@@ -77,14 +87,16 @@ export function BotCard({ bot, onEdit }: BotCardProps) {
       </div>
 
       <div className={styles.cardActionsBottom}>
-        <button
-          type="button"
-          className={styles.iconButton}
-          aria-label={DASHBOARD_COPY.EDIT_BOT}
-          onClick={() => onEdit(bot)}
-        >
-          ✏️
-        </button>
+        <ActionTooltip label={DASHBOARD_COPY.EDIT_BOT_TOOLTIP}>
+          <button
+            type="button"
+            className={styles.iconButton}
+            aria-label={DASHBOARD_COPY.EDIT_BOT}
+            onClick={() => onEdit(bot)}
+          >
+            <BotEditIcon />
+          </button>
+        </ActionTooltip>
         <span className={styles.statusIndicator}>
           <span
             className={`${styles.statusDot} ${getStatusDotClass(bot.status)}`}

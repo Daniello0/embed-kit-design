@@ -37,28 +37,32 @@ export function AuthPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.card}>
+      <header className={styles.topBar}>
         <Link className={styles.logo} to={ROUTES.HOME}>
           {APP_NAME}
         </Link>
+      </header>
 
-        <h1 className={styles.heading}>{meta.heading}</h1>
+      <main className={styles.main}>
+        <div className={styles.card}>
+          <h1 className={styles.heading}>{meta.heading}</h1>
 
-        <AuthForm view={view} onSuccess={handleSuccess} />
+          <AuthForm view={view} onSuccess={handleSuccess} />
 
-        <p className={styles.divider}>{AUTH_COPY.DIVIDER}</p>
+          <p className={styles.divider}>{AUTH_COPY.DIVIDER}</p>
 
-        <GoogleAuthButton onSuccess={handleSuccess} />
+          <GoogleAuthButton onSuccess={handleSuccess} />
 
-        <p className={styles.toggle}>
-          {meta.togglePrompt}
-          <Link className={styles.toggleLink} to={meta.alternateRoute}>
-            {meta.toggleLinkLabel}
-          </Link>
-        </p>
+          <p className={styles.toggle}>
+            {meta.togglePrompt}
+            <Link className={styles.toggleLink} to={meta.alternateRoute}>
+              {meta.toggleLinkLabel}
+            </Link>
+          </p>
 
-        <p className={styles.footerNote}>{AUTH_COPY.NO_CREDIT_CARD}</p>
-      </div>
+          <p className={styles.footerNote}>{AUTH_COPY.NO_CREDIT_CARD}</p>
+        </div>
+      </main>
     </div>
   )
 }
