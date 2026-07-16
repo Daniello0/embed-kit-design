@@ -1,0 +1,25 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  line-height: var(--line-height-xs);
+  text-transform: capitalize;
+}
+
+.free {
+  background: var(--badge-free-bg);
+  color: var(--badge-free-text);
+}
+
+.pro {
+  background: var(--badge-pro-bg);
+  color: var(--badge-pro-text);
+}
+
+.business {
+  background: var(--badge-business-bg);
+  color: var(--badge-business-text);
+}

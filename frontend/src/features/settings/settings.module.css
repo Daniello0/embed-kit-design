@@ -1,0 +1,311 @@
+.settingsPage {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  gap: var(--space-6);
+  max-width: var(--content-max-width-app);
+  margin: 0 auto;
+  padding: var(--space-6);
+}
+
+.header {
+  grid-column: 1 / -1;
+}
+
+.title {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-page-title);
+  font-weight: var(--font-weight-page-title);
+  line-height: var(--line-height-page-title);
+}
+
+.description {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+  align-self: start;
+}
+
+.tabLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: background var(--transition-card-hover);
+}
+
+.tabLink:hover {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+}
+
+.tabLinkActive {
+  background: var(--primary-subtle);
+  color: var(--primary);
+}
+
+.tabLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.lockIcon {
+  font-size: var(--font-size-xs);
+  line-height: 1;
+}
+
+.content {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+
+.sectionHeader {
+  margin-bottom: var(--space-5);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: var(--font-size-section);
+  font-weight: var(--font-weight-section);
+  line-height: var(--line-height-section);
+}
+
+.sectionDescription {
+  margin: var(--space-1) 0 0;
+  color: var(--text-muted);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-xs);
+}
+
+.fieldList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.fieldLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.fieldValue {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+}
+
+.readOnlyInput {
+  width: 100%;
+  min-height: var(--input-height);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-base);
+  color: var(--text-secondary);
+  font: inherit;
+}
+
+.planCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-base);
+}
+
+.planHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.planName {
+  margin: 0;
+  font-size: var(--font-size-section);
+  font-weight: var(--font-weight-section);
+}
+
+.planPrice {
+  margin: var(--space-1) 0 0;
+  color: var(--text-secondary);
+}
+
+.featureList {
+  margin: 0;
+  padding-left: var(--space-4);
+  color: var(--text-secondary);
+}
+
+.featureList li + li {
+  margin-top: var(--space-1);
+}
+
+.actionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.primaryButton,
+.secondaryButton,
+.ghostButton {
+  min-height: var(--btn-height-md);
+  padding: 0 var(--btn-padding-x-md);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: var(--btn-font-size-md);
+  cursor: pointer;
+  transition: background var(--transition-card-hover);
+}
+
+.primaryButton {
+  border: none;
+  background: var(--primary);
+  color: var(--text-on-primary);
+}
+
+.primaryButton:hover {
+  background: var(--primary-hover);
+}
+
+.secondaryButton {
+  border: 1px solid var(--secondary);
+  background: transparent;
+  color: var(--secondary);
+}
+
+.secondaryButton:hover {
+  background: var(--secondary-subtle);
+}
+
+.ghostButton {
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.ghostButton:hover {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+}
+
+.topPlanNotice {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.placeholderPanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-base);
+}
+
+.placeholderTitle {
+  margin: 0;
+  font-weight: 600;
+}
+
+.placeholderDescription {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.monoValue {
+  margin: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-mono);
+  line-height: var(--line-height-mono);
+  word-break: break-all;
+}
+
+.hint {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-xs);
+}
+
+.gateWrapper {
+  position: relative;
+}
+
+.gateContent {
+  filter: blur(2px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.gateOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: rgba(10, 11, 20, 0.55);
+  border-radius: var(--radius-md);
+}
+
+.gateCard {
+  max-width: 320px;
+  padding: var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  text-align: center;
+}
+
+.gateTitle {
+  margin: var(--space-2) 0 var(--space-1);
+  font-weight: 600;
+}
+
+.gateDescription {
+  margin: 0 0 var(--space-4);
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-xs);
+}
+
+@media (max-width: 768px) {
+  .settingsPage {
+    grid-template-columns: 1fr;
+  }
+}

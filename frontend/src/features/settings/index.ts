@@ -1,5 +1,7 @@
 export { ApiSettings } from './api-settings'
 export { BillingSettings } from './billing-settings'
 export { ProfileSettings } from './profile-settings'
+export { SettingsGate } from './settings-gate'
 export { SettingsLayout } from './settings-layout'
 export { TeamSettings } from './team-settings'
+export { SETTINGS_COPY } from './settings.constants'
